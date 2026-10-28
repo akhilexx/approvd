@@ -16,7 +16,7 @@
 - **Runtime dependencies: none.** Only Node.js built-ins and the public PayPal REST sandbox API are used. No third-party code was copied in.
 - **Design inspiration, no code reuse:** the policy idea (caps, allowlists, approvals) is the same general pattern the author uses elsewhere, for example in a separate NEAR hackathon prototype. Approvd's implementation was written from scratch for PayPal, and no files were shared.
 - **Assistance and authorship:** the initial scaffold, code, tests and docs were produced on 28 Oct 2026 by **Forge**, an AI build assistant working at the entrant's direction. The Official Rules allow technical assistance provided "the Submission components are solely the Entrant's work product and the result of the Entrant's ideas and creativity, and the Entrant owns all rights to them." The entrant chose the direction, reviews the work and owns it.
-- **Git history is untouched:** commits written by the assistant keep the author `Forge (Jyothish build assistant) <forge@localhost>`, with their real timestamps. They were not rewritten or re-attributed. Commits the entrant makes himself are authored `Akhilesh Patil`. The assistant does not commit under the entrant's name.
+- **Commit authorship:** the commits were prepared by an AI build assistant at the entrant's direction and were re-attributed to the entrant's GitHub identity (`Akhilesh Patil`) before the first public push. Original timestamps are kept. The assistance is disclosed above.
 - **Sponsor support:** none. No funding, contract or commercial licence from PayPal or Devpost (Official Rules §4, "Financial or Preferential Support").
 
 ## Commit log at time of writing
