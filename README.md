@@ -98,7 +98,7 @@ Open http://localhost:8787 and click the suggestion chips in order (or type them
    PAYPAL_CLIENT_SECRET=...sandbox secret...
    ```
 3. `npm run smoke:sandbox` checks OAuth, creates a $1.23 order and reads it back.
-4. `npm start`, then repeat the walkthrough. In step 2 the link opens `sandbox.paypal.com`. Log in as the sandbox **buyer** and pay, then say "capture it". Payouts appear as sandbox transactions on your sandbox business account. Payouts must be enabled on the sandbox app; they are by default for new sandbox business accounts.
+4. `npm start`, then repeat the walkthrough. In step 2 the link opens `sandbox.paypal.com`. Log in as the sandbox **buyer** and pay, then say "capture it". Payouts appear as sandbox transactions on your sandbox business account. If a payout returns an authorization error, enable the **Payouts** feature on the sandbox app in the developer dashboard.
 
 ### With a real LLM
 
