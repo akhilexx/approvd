@@ -34,7 +34,7 @@ It also works from other agents: `src/mcp.ts` is an **MCP server** that exposes 
 ```mermaid
 flowchart LR
   U[Merchant in web console] -->|natural language| A[Agent loop<br/>src/agent/agent.ts]
-  M[Any MCP client<br/>Claude, Cursor] -->|tools/call| MCP[MCP bridge<br/>src/mcp.ts] -->|HTTP| API
+  M[Any MCP client<br/>desktop AI app or IDE agent] -->|tools/call| MCP[MCP bridge<br/>src/mcp.ts] -->|HTTP| API
   U -.-> API[HTTP API<br/>src/server.ts]
   API --> A
   A -->|propose ONE tool call| P{{Planner}}
@@ -71,7 +71,7 @@ git clone https://github.com/akhilexx/approvd.git && cd approvd
 npm run dev          # mock PayPal + offline planner on http://localhost:8787
 # or, in the terminal only:
 npm run demo         # scripted end-to-end story
-npm test             # 43 tests
+npm test             # 82 tests, no network or keys needed
 ```
 
 ### Judge walkthrough: do X, see Y
@@ -127,10 +127,10 @@ The adapter adds a fix-it hint to both errors, so the agent tells the merchant w
 | Payouts v1: batch of 3.75 USD → items `SUCCESS` (sandbox buyer) and `UNCLAIMED` (example.com); duplicate `sender_batch_id` → `400 USER_BUSINESS_ERROR` | ✅ |
 | Disputes v1: list | ✅ (0 disputes on the account) |
 | Agent on the real sandbox: create, status, capture error, allowlisted payout, approval queue → human approves → payout executes, $900 hard-limit deny, disputes | ✅ |
-| PayPal-wallet buyer approval → capture → refunds | ⏳ needs one browser approval as the sandbox buyer, then `npm run e2e:sandbox -- capture <ORDER_ID> --record` |
-| Disputes v1: get | ⏳ no disputes exist on the sandbox account |
+| PayPal-wallet checkout: sandbox buyer approved in the browser → capture `COMPLETED` 45.00 USD (idempotent retry returns the same capture) → partial refund 1.00 → `PARTIALLY_REFUNDED` → full refund 44.00 → `REFUNDED` → over-refund `422 CAPTURE_FULLY_REFUNDED` | ✅ 28 Oct 22:56 IST (`npm run e2e:sandbox -- capture <ORDER_ID> --record`) |
+| Disputes v1: get one dispute | ⏳ not tested live: no disputes exist on the sandbox account (covered by contract tests and the mock only) |
 
-Result: 21 passed, 0 failed, 2 blocked. The replay tests in `test/sandbox-fixtures.test.ts` pin the adapter to these recorded, redacted sandbox responses.
+Result: full run 21 passed, 0 failed, 2 blocked (wallet approval, get dispute); the wallet capture run after the buyer approved passed 7/7. The replay tests in `test/sandbox-fixtures.test.ts` pin the adapter to these recorded, redacted sandbox responses.
 
 ### With a real LLM (Azure OpenAI, or any OpenAI-compatible API)
 

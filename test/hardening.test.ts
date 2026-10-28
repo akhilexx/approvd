@@ -105,3 +105,9 @@ test("rate limit keys on the trusted edge header only; spoofed X-Forwarded-For i
   assert.equal((await b.req("/api/chat", { body: { message: "hi" }, headers: { "True-Client-IP": "203.0.113.1" } })).status, 429);
   assert.equal((await b.req("/api/chat", { body: { message: "hi" }, headers: { "True-Client-IP": "203.0.113.2" } })).status, 200);
 });
+
+test("UI_PLANNER_LABEL overrides only the console badge text", async (t) => {
+  const { srv, req, app } = await boot({ UI_PLANNER_LABEL: "gpt-6.1-sol" }); t.after(() => srv.close());
+  assert.equal((await req("/api/state")).body.planner, "gpt-6.1-sol");
+  assert.notEqual(app.agent.planner.name, "gpt-6.1-sol");
+});

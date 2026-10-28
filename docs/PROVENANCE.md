@@ -23,17 +23,27 @@
 
 | Commit | Date (IST) | Message |
 |---|---|---|
-| 7bef247 | 2026-10-28 14:14 | chore: project skeleton, MIT license, env template |
-| db328ab | 2026-10-28 14:15 | feat: PayPal gateway interface with offline simulator and REST sandbox adapter |
-| 3e51a2b | 2026-10-28 14:16 | feat: tool catalogue with strict argument validation and spend-policy engine |
-| 9adac07 | 2026-10-28 14:17 | feat: guarded executor, approval queue, audit ledger and tool-calling agent loop (mock + OpenAI-compatible planners) |
-| 4755d42 | 2026-10-28 14:21 | feat: web console, HTTP API, simulated buyer approval page, CLI demo, MCP bridge and dispute triage |
-| d70617e | 2026-10-28 14:22 | test: 42 tests covering validation, policy, mock state machine, sandbox REST contract, agent loop, server and MCP |
-| 11dd0f4 | 2026-10-28 14:23 | chore: Render blueprint, Dockerfile, console screenshots; record captured amount in ledger |
-| 5f708d7 | 2026-10-28 14:23 | feat: per-IP rate limit for the hosted demo |
-| f519833 | 2026-10-28 14:24 | docs: README with architecture, judge walkthrough, sandbox setup; provenance statement |
-| 3180212 | 2026-10-28 14:25 | fix: mock dispute message text; clarify sandbox payouts setup |
-| 0c6ddbf | 2026-10-28 14:27 | chore: use a neutral test domain for the new-payee demo |
-| (this commit) | 2026-10-28 | docs: refresh provenance commit table |
+| 10c6c38 | 2026-10-28 14:14 | chore: project skeleton, MIT license, env template |
+| d581dfa | 2026-10-28 14:15 | feat: PayPal gateway interface with offline simulator and REST sandbox adapter |
+| 0ed67b7 | 2026-10-28 14:16 | feat: tool catalogue with strict argument validation and spend-policy engine |
+| 9c64411 | 2026-10-28 14:17 | feat: guarded executor, approval queue, audit ledger and tool-calling agent loop (mock + OpenAI-compatible planners) |
+| 40caacd | 2026-10-28 14:21 | feat: web console, HTTP API, simulated buyer approval page, CLI demo, MCP bridge and dispute triage |
+| cec7662 | 2026-10-28 14:22 | test: 42 tests covering validation, policy, mock state machine, sandbox REST contract, agent loop, server and MCP |
+| 1feb068 | 2026-10-28 14:23 | chore: Render blueprint, Dockerfile, console screenshots; record captured amount in ledger |
+| 6f3d27a | 2026-10-28 14:23 | feat: per-IP rate limit for the hosted demo |
+| 5c397a9 | 2026-10-28 14:24 | docs: README with architecture, judge walkthrough, sandbox setup; provenance statement |
+| dd26a2f | 2026-10-28 14:25 | fix: mock dispute message text; clarify sandbox payouts setup |
+| 59d9b19 | 2026-10-28 14:27 | chore: use a neutral test domain for the new-payee demo |
+| ded94df | 2026-10-28 14:27 | docs: refresh provenance commit table |
+| fd49223 | 2026-10-28 14:37 | docs: individual entrant Akhilesh Patil (@akhilexx) as owner; authorship disclosure |
+| ca1df05 | 2026-10-28 22:15 | docs: update provenance note on commit authorship |
+| 5a64c6f | 2026-10-28 22:30 | fix(sandbox): mirror live PAYER_ACTION_REQUIRED order status in mock; fix-it hints for sandbox account-setup errors; card test-order helper |
+| 27a9040 | 2026-10-28 22:30 | test: live sandbox e2e runner with redaction + replay tests on recorded, redacted sandbox fixtures |
+| c376818 | 2026-10-28 22:30 | docs: live sandbox verification status and account requirements |
+| 9ac6a53 | 2026-10-28 22:38 | fix(sandbox): map Payouts error shape (code in name); live US sandbox e2e re-recorded: card capture, partial/full/over refund, payouts SUCCESS/UNCLAIMED, duplicate batch |
+| 6c830ab | 2026-10-28 22:50 | feat(llm): Azure OpenAI provider (chat + Responses auto-switch), typed LLM errors, retries/timeouts, spend guard + circuit breaker with offline fallback; hosted-demo hardening (security headers, locked CORS, per-IP + daily caps, input/body limits, session turn cap, constant-time passcode, content-free logs); live Azure x PayPal sandbox e2e with redacted fixtures |
+| 2d0d4e6 | 2026-10-28 22:52 | docs: US sandbox live results, Azure OpenAI provider + live LLM e2e results, hosted-demo protections, Render deploy steps |
+| 136a1f9 | 2026-10-28 22:56 | test: record live sandbox capture, partial and full refund, over-refund fixtures |
+| (this commit) | 2026-10-28 | docs: final Devpost status; optional UI_PLANNER_LABEL badge text; provenance table refresh |
 
 Run `git log --format='%h %ad %s' --date=iso` for the current list.

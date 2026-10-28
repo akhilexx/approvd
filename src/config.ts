@@ -40,6 +40,8 @@ export interface AppConfig {
   llm: { timeoutMs: number; maxRetries: number; maxOutputTokens: number };
   port: number;
   demoPasscode: string;
+  /** Optional text for the console's "AI:" badge (e.g. just the model name for a video without vendor names). */
+  uiPlannerLabel: string;
   limits: DemoLimitsConfig;
   policy: PolicyConfig;
 }
@@ -96,6 +98,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     llm: { timeoutMs: num(env.LLM_TIMEOUT_MS, 30_000), maxRetries: num(env.LLM_MAX_RETRIES, 2), maxOutputTokens: num(env.LLM_MAX_OUTPUT_TOKENS, 1200) },
     port,
     demoPasscode: env.DEMO_PASSCODE || "",
+    uiPlannerLabel: (env.UI_PLANNER_LABEL || "").slice(0, 60),
     limits: {
       rateLimitPerMin: num(env.RATE_LIMIT_PER_MIN, 30),
       dailyRequestCap: num(env.DAILY_REQUEST_CAP, 2000),

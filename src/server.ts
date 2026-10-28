@@ -67,7 +67,7 @@ export function makeHandler(app: App) {
   const corsOrigin = lim.corsOrigin;
   let { engine, agent } = app;
   const state = () => ({
-    paypalMode: app.gw.mode, planner: agent.planner.name, currency: app.cfg.currency,
+    paypalMode: app.gw.mode, planner: app.cfg.uiPlannerLabel || agent.planner.name, currency: app.cfg.currency,
     limits: { maxInputChars: lim.maxInputChars, sessionTurnCap: lim.sessionTurnCap, rateLimitPerMin: lim.rateLimitPerMin, llm: app.guard.status() },
     policy: { ...app.cfg.policy, text: describePolicy(app.cfg.policy) },
     outflowLast24h: engine.outflowLast24h(), refs: engine.refs,
