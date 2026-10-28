@@ -1,0 +1,31 @@
+{
+  "ranAt": "2026-10-28T17:57:46.010Z",
+  "mode": "disputes",
+  "results": [
+    {
+      "step": "list_disputes",
+      "ok": true,
+      "detail": "1 dispute(s); first PP-R-UYL-10194987 MERCHANDISE_OR_SERVICE_NOT_RECEIVED WAITING_FOR_SELLER_RESPONSE stage INQUIRY"
+    },
+    {
+      "step": "get_dispute",
+      "ok": true,
+      "detail": "PP-R-UYL-10194987 MERCHANDISE_OR_SERVICE_NOT_RECEIVED WAITING_FOR_SELLER_RESPONSE stage INQUIRY; capture 2PX96115YK7470344 HELD; buyer asks 20.00; allowed: accept_claim:PARTIAL_REFUND, accept_claim:REFUND, make_offer:REFUND"
+    },
+    {
+      "step": "agent:list_disputes",
+      "ok": true,
+      "detail": "ℹ️ 1 dispute(s): PP-R-UYL-10194987 MERCHANDISE_OR_SERVICE_NOT_RECEIVED 20.00 USD WAITING_FOR_SELLER_RESPONSE."
+    },
+    {
+      "step": "agent:draft_dispute_reply",
+      "ok": true,
+      "detail": "ℹ️ Dispute PP-R-UYL-10194987 (MERCHANDISE_OR_SERVICE_NOT_RECEIVED, 20.00 USD, WAITING_FOR_SELLER_RESPONSE, stage INQUIRY). | Seller response due 2026-11-17. Capture 2PX96115YK7470344. PayPal allows: accept_claim:PARTIAL_REFUND, accept_claim:REFUND, make_offer:REFUND (Approvd only drafts; it never responds). | Buyer said: BUYER: Sandbox test: item not received. | Draft reply for you to review: | \"Hi, thanks for reaching out and sorry for the wait. Your order (20.00 USD) shipped and I'm attaching the tracking details so you can see where it is. If it hasn't arrived within 3 days of the carrier's estimate, I'll reship or refund in full.\" | Evidence to attach: Carrier tracking number and carrier name; Proof of delivery to the buyer's PayPal address; Shipping date and promised delivery window; Any buyer messages acknowledging the shipment. (Not submitted.)"
+    },
+    {
+      "step": "agent:dispute_triage_moved_no_money",
+      "ok": true,
+      "detail": "2 ledger row(s), read-only tools only"
+    }
+  ]
+}

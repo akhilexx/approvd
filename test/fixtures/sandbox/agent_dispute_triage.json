@@ -1,0 +1,217 @@
+{
+  "recordedAt": "2026-10-28T17:57:46.010Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/customer/disputes?page_size=10",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "items": [
+            {
+              "dispute_id": "PP-R-UYL-10194987",
+              "create_time": "2026-10-28T17:52:00.000Z",
+              "update_time": "2026-10-28T17:55:23.000Z",
+              "disputed_transactions": [
+                {
+                  "buyer_transaction_id": "6KF5234616367124S",
+                  "buyer": {
+                    "payer_id": "REDACTED_ID"
+                  },
+                  "seller": {
+                    "merchant_id": "REDACTED_ID"
+                  }
+                }
+              ],
+              "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+              "status": "WAITING_FOR_SELLER_RESPONSE",
+              "dispute_state": "REQUIRED_ACTION",
+              "dispute_amount": {
+                "currency_code": "USD",
+                "value": "20.00"
+              },
+              "dispute_life_cycle_stage": "INQUIRY",
+              "dispute_channel": "INTERNAL",
+              "seller_response_due_date": "2026-11-17T17:52:00.000Z",
+              "links": [
+                {
+                  "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-UYL-10194987",
+                  "rel": "self",
+                  "method": "GET"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes?page_size=10",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes?page_size=10",
+              "rel": "first",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/customer/disputes/PP-R-UYL-10194987",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "dispute_id": "PP-R-UYL-10194987",
+          "create_time": "2026-10-28T17:52:00.022Z",
+          "update_time": "2026-10-28T17:55:23.967Z",
+          "disputed_transactions": [
+            {
+              "buyer_transaction_id": "6KF5234616367124S",
+              "seller_transaction_id": "2PX96115YK7470344",
+              "create_time": "2026-10-28T17:50:07.000Z",
+              "transaction_status": "HELD",
+              "gross_amount": {
+                "currency_code": "USD",
+                "value": "20.00"
+              },
+              "buyer": {
+                "email": "sandbox-personal@example.com",
+                "payer_id": "REDACTED_ID",
+                "name": "Sandbox Buyer"
+              },
+              "seller": {
+                "email": "sandbox-business@example.com",
+                "merchant_id": "REDACTED_ID",
+                "name": "Sandbox Seller"
+              },
+              "items": [
+                {
+                  "item_name": "Approvd dispute test: 1 soy candle (do not refund)",
+                  "item_description": "Approvd dispute test: 1 soy candle (do not refund)",
+                  "item_quantity": "1",
+                  "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+                  "item_type": "PRODUCT"
+                }
+              ],
+              "seller_protection_eligible": true,
+              "seller_protection_type": "EXPANDED_SELLER_PROTECTION"
+            }
+          ],
+          "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+          "status": "WAITING_FOR_SELLER_RESPONSE",
+          "dispute_amount": {
+            "currency_code": "USD",
+            "value": "20.00"
+          },
+          "dispute_state": "REQUIRED_ACTION",
+          "fund_movements": [
+            {
+              "party": "RECEIVER",
+              "amount": {
+                "currency_code": "USD",
+                "value": "18.81"
+              },
+              "initiated_time": "2026-10-28T17:55:02.000Z",
+              "type": "DEBIT",
+              "reason": "HOLD_PLACED"
+            }
+          ],
+          "dispute_life_cycle_stage": "INQUIRY",
+          "dispute_channel": "INTERNAL",
+          "messages": [
+            {
+              "posted_by": "BUYER",
+              "time_posted": "2026-10-28T17:52:00.022Z",
+              "content": "Sandbox test: item not received."
+            }
+          ],
+          "extensions": {
+            "merchant_contacted": false,
+            "buyer_contacted_time": "2026-10-28T17:51:59.305Z"
+          },
+          "evidences": [
+            {
+              "evidence_type": "CREATE",
+              "notes": "Sandbox test: item not received.",
+              "source": "SUBMITTED_BY_BUYER",
+              "date": "2026-10-28T17:52:00.022Z",
+              "dispute_life_cycle_stage": "INQUIRY"
+            },
+            {
+              "evidence_type": "PROOF_OF_FULFILLMENT",
+              "source": "REQUESTED_FROM_SELLER",
+              "date": "2026-10-28T17:55:23.967Z"
+            }
+          ],
+          "seller_response_due_date": "2026-11-17T17:52:00.022Z",
+          "offer": {
+            "buyer_requested_amount": {
+              "currency_code": "USD",
+              "value": "20.00"
+            }
+          },
+          "refund_details": {
+            "allowed_refund_amount": {
+              "currency_code": "USD",
+              "value": "20.00"
+            }
+          },
+          "allowed_response_options": {
+            "accept_claim": {
+              "accept_claim_types": [
+                "PARTIAL_REFUND",
+                "REFUND"
+              ]
+            },
+            "make_offer": {
+              "offer_types": [
+                "REFUND"
+              ]
+            }
+          },
+          "links": [
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-UYL-10194987",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-UYL-10194987/accept-claim",
+              "rel": "accept_claim",
+              "method": "POST"
+            },
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-UYL-10194987/provide-evidence",
+              "rel": "provide_evidence",
+              "method": "POST"
+            },
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-UYL-10194987/send-message",
+              "rel": "send_message",
+              "method": "POST"
+            },
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-UYL-10194987/escalate",
+              "rel": "escalate",
+              "method": "POST"
+            },
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-UYL-10194987/make-offer",
+              "rel": "make_offer",
+              "method": "POST"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

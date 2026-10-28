@@ -6,6 +6,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { SandboxPayPal } from "../src/paypal/sandbox.ts";
 import { PayPalError } from "../src/paypal/types.ts";
 import { redactValue, assertClean } from "../scripts/redact.ts";
+import { createApp } from "../src/app.ts";
 
 const DIR = new URL("./fixtures/sandbox/", import.meta.url);
 const load = (name: string) => JSON.parse(readFileSync(new URL(`${name}.json`, DIR), "utf8")).calls as any[];
@@ -95,7 +96,37 @@ test("live fixture: duplicate sender_batch_id is rejected; Payouts' error shape 
 
 test("live fixture: list disputes maps the (possibly empty) list", async () => {
   const c = load("list_disputes"); const ds = await replay(c).listDisputes();
-  assert.equal(ds.length, (c[c.length - 1].response.body.items ?? []).length);
+  const items = c[c.length - 1].response.body.items ?? [];
+  assert.equal(ds.length, items.length);
+  ds.forEach((d, i) => { assert.equal(d.id, items[i].dispute_id); assert.equal(d.stage, items[i].dispute_life_cycle_stage); });
+});
+
+test("live fixture: show one dispute (read-only) maps stage, deadline, disputed capture, buyer ask and allowed responses", { skip: !has("get_dispute") && "not recorded yet: needs a live sandbox dispute" }, async () => {
+  const c = load("get_dispute"); const raw = c[0].response.body; const id = c[0].request.path.split("/").pop();
+  assert.equal(c[0].request.method, "GET");
+  const d = await replay(c).getDispute(id);
+  assert.equal(d.id, raw.dispute_id); assert.equal(d.reason, raw.reason); assert.equal(d.status, raw.status);
+  assert.equal(d.stage, raw.dispute_life_cycle_stage); assert.ok(d.sellerResponseDue);
+  assert.equal(d.captureId, raw.disputed_transactions[0].seller_transaction_id);
+  assert.equal(d.amount.value, raw.dispute_amount.value);
+  assert.equal(d.buyerRequested?.value, raw.offer?.buyer_requested_amount?.value);
+  assert.ok(d.allowedResponses!.length > 0 && d.allowedResponses!.every((x) => /^[a-z_]+(:[A-Z_]+)?$/.test(x)));
+  assert.ok(d.messages!.length >= 1);
+  for (const p of ["buyer", "seller"]) assert.equal(raw.disputed_transactions[0][p].name, p === "buyer" ? "Sandbox Buyer" : "Sandbox Seller", "party names are redacted");
+});
+
+test("live fixture: agent dispute triage on the live dispute drafts a reply and never responds or moves money", { skip: !has("agent_dispute_triage") && "not recorded yet" }, async () => {
+  const c = load("agent_dispute_triage");
+  assert.ok(c.every((x) => x.request.method === "GET"), "triage is read-only");
+  const app = createApp({ env: { PAYPAL_MODE: "mock", LLM_MODE: "mock" } as any, gateway: replay(c) });
+  const r1 = await app.agent.chat("t", "List open disputes");
+  assert.equal(r1.steps[0].call.name, "list_disputes"); assert.match(r1.reply, /1 dispute\(s\)/);
+  const r2 = await app.agent.chat("t", "Draft a reply to the first dispute");
+  assert.equal(r2.steps[0].call.name, "get_dispute"); assert.equal(r2.steps[0].status, "executed");
+  assert.match(r2.reply, /stage INQUIRY/); assert.match(r2.reply, /Draft reply for you to review/); assert.match(r2.reply, /Not submitted/);
+  assert.match(r2.reply, /tracking/i, "not-received reason gets the delivery evidence checklist");
+  assert.ok(app.engine.ledger.every((e) => e.tool === "list_disputes" || e.tool === "get_dispute"));
+  assert.equal(app.engine.outflowLast24h(), 0);
 });
 
 test("live fixture: wallet order capture after buyer approval", { skip: !has("capture_order") && "not recorded yet: needs one sandbox buyer approval in a browser" }, async () => {
@@ -118,4 +149,7 @@ test("redactValue scrubs secrets, tokens, ids and sandbox account emails", () =>
   const out = JSON.stringify(redactValue({ access_token: "A21AAabc", nested: { payer_id: "XYZ", note: "key s3cretVALUE here", email_address: "sb-abc123@personal.example.com" } }, ["s3cretVALUE"]));
   assert.doesNotMatch(out, /A21AAabc|XYZ|s3cretVALUE|sb-abc123/);
   assert.throws(() => assertClean("contains s3cretVALUE", ["s3cretVALUE"]), /Redaction failure/);
+  const party = JSON.stringify(redactValue({ buyer: { name: "Real Person", email: "someone@realmail.test", payer_id: "P1" }, seller: { name: "Shop Owner", email: "sb-x1@business.example.com" } }, []));
+  assert.doesNotMatch(party, /Real Person|someone@realmail|Shop Owner|sb-x1|P1/);
+  assert.match(party, /Sandbox Buyer.*Sandbox Seller/);
 });

@@ -4,7 +4,7 @@
 import { randomUUID } from "node:crypto";
 import {
   PayPalError, toMoney,
-  type CaptureInfo, type CaptureResult, type CreateOrderInput, type DisputeSummary, type Money, type OrderSummary,
+  type CaptureInfo, type CaptureResult, type CreateOrderInput, type DisputeDetail, type DisputeSummary, type Money, type OrderSummary,
   type PayoutBatchResult, type PayoutItemInput, type PayPalGateway, type RefundResult,
 } from "./types.ts";
 
@@ -124,10 +124,23 @@ export class SandboxPayPal implements PayPalGateway {
   }
   async listDisputes(): Promise<DisputeSummary[]> {
     const j = await this.call("GET", "/v1/customer/disputes?page_size=10");
-    return (j.items ?? []).map((d: any) => ({ id: d.dispute_id, reason: d.reason, status: d.status, amount: m(d.dispute_amount), createTime: d.create_time }));
+    return (j.items ?? []).map((d: any) => ({ id: d.dispute_id, reason: d.reason, status: d.status, amount: m(d.dispute_amount), createTime: d.create_time, stage: d.dispute_life_cycle_stage, sellerResponseDue: d.seller_response_due_date }));
   }
-  async getDispute(disputeId: string) {
+  async getDispute(disputeId: string): Promise<DisputeDetail> {
     const d = await this.call("GET", `/v1/customer/disputes/${encodeURIComponent(disputeId)}`);
-    return { id: d.dispute_id, reason: d.reason, status: d.status, amount: m(d.dispute_amount), createTime: d.create_time, messages: (d.messages ?? []).map((x: any) => `${x.posted_by}: ${x.content}`) };
+    const tx = (d.disputed_transactions ?? [])[0] ?? {};
+    const opts = d.allowed_response_options ?? {};
+    const allowed: string[] = Object.entries(opts).flatMap(([k, v]: [string, any]) => {
+      const types = Object.values(v ?? {}).find(Array.isArray) as string[] | undefined;
+      return types?.length ? types.map((t) => `${k}:${t}`) : [k];
+    });
+    return {
+      id: d.dispute_id, reason: d.reason, status: d.status, amount: m(d.dispute_amount), createTime: d.create_time,
+      stage: d.dispute_life_cycle_stage, sellerResponseDue: d.seller_response_due_date,
+      messages: (d.messages ?? []).map((x: any) => `${x.posted_by}: ${x.content}`),
+      captureId: tx.seller_transaction_id, transactionStatus: tx.transaction_status,
+      buyerRequested: d.offer?.buyer_requested_amount ? m(d.offer.buyer_requested_amount) : undefined,
+      allowedResponses: allowed,
+    };
   }
 }

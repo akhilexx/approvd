@@ -16,6 +16,13 @@ export function redactValue(v: unknown, secrets: string[]): unknown {
     for (const [k, val] of Object.entries(v)) {
       if (DROP_KEYS.has(k)) out[k] = "[REDACTED]";
       else if (ID_KEYS.has(k)) out[k] = "REDACTED_ID";
+      // Disputes v1 returns buyer/seller names and emails: replace with neutral sandbox placeholders.
+      else if ((k === "buyer" || k === "seller") && val && typeof val === "object" && !Array.isArray(val)) {
+        const party = redactValue(val, secrets) as Record<string, unknown>;
+        if ("name" in party) party.name = k === "buyer" ? "Sandbox Buyer" : "Sandbox Seller";
+        if (typeof party.email === "string" && !/@(personal|business)?\.?example\.com$/.test(party.email)) party.email = `sandbox-${k === "buyer" ? "personal" : "business"}@example.com`;
+        out[k] = party;
+      }
       else out[k] = redactValue(val, secrets);
     }
     return out;

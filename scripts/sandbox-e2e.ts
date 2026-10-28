@@ -1,6 +1,7 @@
 // Live end-to-end test against the PayPal REST *sandbox* (never live).
 //   npm run e2e:sandbox                    full run: OAuth, orders, card capture+refunds (if enabled), payouts, disputes, agent
 //   npm run e2e:sandbox -- capture <ID>    after a sandbox buyer approved order <ID> in the browser: capture, partial + full refund
+//   npm run e2e:sandbox -- disputes        READ-ONLY: list disputes, show the first, run the agent's draft-only triage (GET calls only)
 //   add --record to (re)write redacted fixtures into test/fixtures/sandbox/
 // Credentials come only from the environment or the git-ignored .env. Every line printed and every fixture written is
 // redacted and then checked for secrets; the run aborts if anything leaks.
@@ -32,9 +33,11 @@ const result = (step: string, ok: boolean | "blocked", detail: string) => { resu
 
 // ---- recording fetch (redacted) ----
 let label = "unlabelled";
+const READ_ONLY = args[0] === "disputes";
 const fixtures: Record<string, any[]> = {};
 const recFetch: typeof fetch = async (input, init) => {
   const url = new URL(String(input));
+  if (READ_ONLY && (init?.method ?? "GET") !== "GET" && !url.pathname.endsWith("/oauth2/token")) throw new Error(`read-only mode refused ${init?.method} ${url.pathname}`);
   const res = await fetch(input, init);
   const text = await res.clone().text();
   let body: unknown = text; try { body = text ? JSON.parse(text) : {}; } catch {}
@@ -143,20 +146,39 @@ async function full() {
   result("agent:list_disputes", r7.steps[0]?.status === "executed", r7.reply.split("\n")[0]);
 }
 
+// Disputes v1, read-only: never accepts, offers, escalates, messages or refunds.
+async function disputes() {
+  const ds = await step("list_disputes", () => gw.listDisputes());
+  if (ds) result("list_disputes", ds.length > 0, `${ds.length} dispute(s)${ds[0] ? `; first ${ds[0].id} ${ds[0].reason} ${ds[0].status} stage ${ds[0].stage}` : ""}`);
+  if (!ds?.length) return void result("get_dispute", "blocked", "no disputes exist on this sandbox account yet");
+  const d = await step("get_dispute", () => gw.getDispute(ds[0].id));
+  if (d) result("get_dispute", d.id === ds[0].id && !!d.reason && !!d.stage, `${d.id} ${d.reason} ${d.status} stage ${d.stage}; capture ${d.captureId} ${d.transactionStatus}; buyer asks ${d.buyerRequested?.value ?? "-"}; allowed: ${(d.allowedResponses ?? []).join(", ")}`);
+  label = "agent_dispute_triage";
+  const app = createApp({ env: { ...process.env, LLM_MODE: "mock" }, gateway: gw });
+  const r1 = await app.agent.chat("e2e", "List open disputes");
+  result("agent:list_disputes", r1.steps[0]?.status === "executed", r1.reply.split("\n")[0]);
+  const r2 = await app.agent.chat("e2e", "Draft a reply to the first dispute");
+  result("agent:draft_dispute_reply", r2.steps[0]?.call.name === "get_dispute" && r2.steps[0]?.status === "executed" && /Not submitted/.test(r2.reply), r2.reply.replace(/\n/g, " | "));
+  result("agent:dispute_triage_moved_no_money", app.engine.ledger.every((e: any) => !/refund|payout|capture/.test(e.call?.name ?? e.tool ?? "")), `${app.engine.ledger.length} ledger row(s), read-only tools only`);
+}
+
 async function main() {
   log(`Approvd sandbox e2e against ${cfg.paypalApiBase} (${new Date().toISOString()})`);
-  if (args[0] === "capture") { if (!args[1]) throw new Error("usage: npm run e2e:sandbox -- capture <ORDER_ID>"); await captureAndRefund(args[1]); }
+  if (args[0] === "disputes") await disputes();
+  else if (args[0] === "capture") { if (!args[1]) throw new Error("usage: npm run e2e:sandbox -- capture <ORDER_ID>"); await captureAndRefund(args[1]); }
   else await full();
   const pass = results.filter((r) => r.ok === true).length, fail = results.filter((r) => r.ok === false).length, blocked = results.filter((r) => r.ok === "blocked").length;
   log(`\nSummary: ${pass} passed, ${fail} failed, ${blocked} blocked`);
   if (RECORD) {
     const dir = resolve("test/fixtures/sandbox"); mkdirSync(dir, { recursive: true });
     for (const [k, v] of Object.entries(fixtures)) {
+      if (READ_ONLY && k === "oauth-token") continue; // keep the existing token fixture
       const text = JSON.stringify({ recordedAt: new Date().toISOString(), note: "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).", calls: v }, null, 2) + "\n";
       assertClean(text, secrets); writeFileSync(resolve(dir, `${k}.json`), text);
     }
-    const summary = JSON.stringify({ ranAt: new Date().toISOString(), mode: args[0] === "capture" ? "capture" : "full", results }, null, 2) + "\n";
-    assertClean(summary, secrets); writeFileSync(resolve(dir, args[0] === "capture" ? "_results-capture.json" : "_results.json"), summary);
+    const mode = args[0] === "capture" || args[0] === "disputes" ? args[0] : "full";
+    const summary = JSON.stringify({ ranAt: new Date().toISOString(), mode, results }, null, 2) + "\n";
+    assertClean(summary, secrets); writeFileSync(resolve(dir, mode === "full" ? "_results.json" : `_results-${mode}.json`), summary);
     log(`Recorded ${Object.keys(fixtures).length} redacted fixture files to test/fixtures/sandbox/`);
   }
   process.exit(fail ? 1 : 0);

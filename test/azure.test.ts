@@ -154,6 +154,31 @@ test("policy beats the model: $900 payout denied, model's split attempt never ru
   assert.equal((app2.gw as MockPayPal).payouts.size, 0);
 });
 
+test("chained request: the model keeps calling tools until every requested action is done (capture, then refund $12)", async () => {
+  // Seen live on the hosted demo: "Capture it, then refund $12" captured but stopped before the refund.
+  // The prompt now requires finishing every requested action; the loop feeds each result back and the policy gates each call.
+  const app = mockApp(AZ_ENV);
+  const gw = app.gw as MockPayPal;
+  const o = await app.engine.run("create_order", { amount: 45, description: "2 soy candles" }, "test");
+  gw.approve(o.result.id);
+  const { f, calls } = fakeAzure((c, n) => {
+    if (n === 1) return respTool("capture_order", { order_id: o.result.id }, "call_1");
+    if (n === 2) {
+      const cap = JSON.parse(c.body.input.find((i: any) => i.type === "function_call_output").output).result.captureId;
+      return respTool("create_refund", { capture_id: cap, amount: 12, reason: "cracked lid" }, "call_2");
+    }
+    return respText("Captured $45 and refunded $12 for the cracked lid.");
+  });
+  app.agent.planner = azure(f, { wire: "responses" });
+  const r = await app.agent.chat("s", "Capture it, then refund $12 for a cracked lid");
+  assert.deepEqual(r.steps.map((s) => [s.call.name, s.status]), [["capture_order", "executed"], ["create_refund", "executed"]]);
+  assert.equal(r.steps[1].result.amount.value, "12.00");
+  assert.equal(calls.length, 3, "two tool turns, then one text reply");
+  assert.match(calls[0].body.instructions, /until EVERY requested action is done/);
+  assert.match(calls[0].body.instructions, /Never say an action was done, or is still to do, unless a tool result says so/);
+  assert.equal(app.engine.outflowLast24h(), 12);
+});
+
 test("session turn cap and input truncation", async () => {
   const app = mockApp({ SESSION_TURN_CAP: "2" });
   await app.agent.chat("s", "hi"); await app.agent.chat("s", "hi");

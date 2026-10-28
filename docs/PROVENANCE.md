@@ -44,6 +44,7 @@
 | 6c830ab | 2026-10-28 22:50 | feat(llm): Azure OpenAI provider (chat + Responses auto-switch), typed LLM errors, retries/timeouts, spend guard + circuit breaker with offline fallback; hosted-demo hardening (security headers, locked CORS, per-IP + daily caps, input/body limits, session turn cap, constant-time passcode, content-free logs); live Azure x PayPal sandbox e2e with redacted fixtures |
 | 2d0d4e6 | 2026-10-28 22:52 | docs: US sandbox live results, Azure OpenAI provider + live LLM e2e results, hosted-demo protections, Render deploy steps |
 | 136a1f9 | 2026-10-28 22:56 | test: record live sandbox capture, partial and full refund, over-refund fixtures |
-| (this commit) | 2026-10-28 | docs: final Devpost status; optional UI_PLANNER_LABEL badge text; provenance table refresh |
+| b9f133a | 2026-10-28 23:09 | docs: final Devpost status; optional UI_PLANNER_LABEL badge text; provenance table refresh |
+| (this commit) | 2026-10-28 | Disputes v1 read tested live (redacted list/show/triage fixtures and replay tests, read-only e2e mode); agent completes chained requests |
 
 Run `git log --format='%h %ad %s' --date=iso` for the current list.

@@ -22,7 +22,23 @@ export interface PayoutItemInput { receiver: string; amount: number; note?: stri
 export interface PayoutItemResult { receiver: string; amount: Money; status: string; itemId?: string }
 export interface PayoutBatchResult { batchId: string; status: string; total: Money; items: PayoutItemResult[] }
 
-export interface DisputeSummary { id: string; reason: string; status: string; amount: Money; createTime: string }
+export interface DisputeSummary {
+  id: string; reason: string; status: string; amount: Money; createTime: string;
+  /** INQUIRY | CHARGEBACK | PRE_ARBITRATION | ARBITRATION (Disputes v1 dispute_life_cycle_stage). */
+  stage?: string;
+  /** Deadline for the seller's response (ISO time), when PayPal returns one. */
+  sellerResponseDue?: string;
+}
+/** Read-only detail of one dispute (GET /v1/customer/disputes/{id}); Approvd never acts on a dispute automatically. */
+export interface DisputeDetail extends DisputeSummary {
+  messages?: string[];
+  /** The seller-side capture id the dispute is about. */
+  captureId?: string;
+  transactionStatus?: string;
+  buyerRequested?: Money;
+  /** allowed_response_options flattened, e.g. "accept_claim:REFUND", "make_offer:REFUND". */
+  allowedResponses?: string[];
+}
 
 export interface CreateOrderInput {
   amount: number;
@@ -43,7 +59,7 @@ export interface PayPalGateway {
   createPayouts(items: PayoutItemInput[], currency: string, senderBatchId: string, subject: string): Promise<PayoutBatchResult>;
   getPayoutBatch(batchId: string): Promise<PayoutBatchResult>;
   listDisputes(): Promise<DisputeSummary[]>;
-  getDispute(disputeId: string): Promise<DisputeSummary & { messages?: string[] }>;
+  getDispute(disputeId: string): Promise<DisputeDetail>;
 }
 
 export class PayPalError extends Error {
