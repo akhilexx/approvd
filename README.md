@@ -97,8 +97,37 @@ Open http://localhost:8787 and click the suggestion chips in order (or type them
    PAYPAL_CLIENT_ID=...sandbox client id...
    PAYPAL_CLIENT_SECRET=...sandbox secret...
    ```
-3. `npm run smoke:sandbox` checks OAuth, creates a $1.23 order and reads it back.
-4. `npm start`, then repeat the walkthrough. In step 2 the link opens `sandbox.paypal.com`. Log in as the sandbox **buyer** and pay, then say "capture it". Payouts appear as sandbox transactions on your sandbox business account. If a payout returns an authorization error, enable the **Payouts** feature on the sandbox app in the developer dashboard.
+3. `npm run smoke:sandbox` checks OAuth, creates a $1.23 order, reads it back and lists disputes. Credentials come from the environment or the git-ignored `.env` (real env vars win).
+4. `npm run e2e:sandbox` runs the full live end-to-end check against `api-m.sandbox.paypal.com` and prints PASS / FAIL / BLOCKED for each step:
+   - OAuth, create order, get order, and rejection of a capture before approval
+   - a card-paid order (PayPal sandbox test card), then capture, a partial refund, a full refund of the remainder and an over-refund rejection
+   - a Payouts batch with a duplicate-batch check and status polling
+   - disputes list and get
+   - the whole agent and policy engine on the real sandbox
+
+   Add `--record` to rewrite the redacted fixtures in `test/fixtures/sandbox/`. After a sandbox buyer approves an order in the browser, `npm run e2e:sandbox -- capture <ORDER_ID>` captures it and runs the refunds. Output and fixtures are redacted, then checked for credentials; the run aborts if anything leaks.
+5. `npm start`, then repeat the walkthrough. In step 2 the link opens `sandbox.paypal.com`. Log in as the sandbox **buyer** and pay, then say "capture it".
+
+**Sandbox account requirements (learned live):** use a **US** sandbox *business* account for the app.
+- With a non-US business account, Payouts fails with `403 PAYOUT_NOT_AVAILABLE` ("You live in a country that is not allowed to send this payout").
+- Card orders fail with `422 PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING` unless Advanced Credit and Debit Card Payments is enabled.
+
+The adapter adds a fix-it hint to both errors, so the agent tells the merchant what to change.
+
+### Live sandbox status (verified 28 Oct 2026, 22:29 IST)
+
+| Step | Live result |
+|---|---|
+| OAuth2 client credentials | ✅ |
+| Orders v2: create (`PAYER_ACTION_REQUIRED` + sandbox `payer-action` link), get | ✅ |
+| Capture before buyer approval is rejected with `422 ORDER_NOT_APPROVED` (and surfaced by the agent) | ✅ |
+| Disputes v1: list | ✅ (0 disputes on the account) |
+| Agent on the real sandbox: create order, status, capture error, approvals queue, $900 hard-limit deny, disputes | ✅ |
+| Buyer approval → capture → partial and full refund | ⏳ needs a browser login as the sandbox buyer, or card processing on the app |
+| Payouts v1 | ❌ `PAYOUT_NOT_AVAILABLE` on the current business account's country; needs a US sandbox business account |
+| Disputes v1: get | ⏳ no disputes yet |
+
+The replay tests in `test/sandbox-fixtures.test.ts` pin the adapter to these recorded, redacted sandbox responses.
 
 ### With a real LLM
 
@@ -116,7 +145,7 @@ The model then plans freely ("bill Priya forty-five for the candles and remind m
 ```json
 { "mcpServers": { "approvd": { "command": "node", "args": ["/path/to/approvd/src/mcp.ts"], "env": { "APPROVD_URL": "http://localhost:8787" } } } }
 ```
-Ask your MCP client to *"pay x@gmail.com $10"* and the request shows up in the Approvd console's Approvals queue.
+Ask your MCP client to *"pay x@mail.test $10"* and the request shows up in the Approvd console's Approvals queue.
 
 ## How it uses PayPal + AI (per the hackathon rules)
 
@@ -144,7 +173,8 @@ src/server.ts    web console + JSON API + simulated buyer page
 src/mcp.ts       MCP stdio bridge
 src/cli.ts       demo / smoke / chat commands
 web/             console UI (plain HTML/CSS/JS)
-test/            node:test suites (no network)
+test/            node:test suites (no network); fixtures/sandbox = redacted live sandbox recordings
+scripts/         sandbox-e2e.ts (live sandbox end-to-end), redact.ts
 docs/            provenance, screenshots
 ```
 
