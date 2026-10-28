@@ -20,10 +20,14 @@
 | 7bef247 | 2026-10-28 14:14 | chore: project skeleton, MIT license, env template |
 | db328ab | 2026-10-28 14:15 | feat: PayPal gateway interface with offline simulator and REST sandbox adapter |
 | 3e51a2b | 2026-10-28 14:16 | feat: tool catalogue with strict argument validation and spend-policy engine |
-| 9adac07 | 2026-10-28 14:17 | feat: guarded executor, approval queue, audit ledger and tool-calling agent loop |
+| 9adac07 | 2026-10-28 14:17 | feat: guarded executor, approval queue, audit ledger and tool-calling agent loop (mock + OpenAI-compatible planners) |
 | 4755d42 | 2026-10-28 14:21 | feat: web console, HTTP API, simulated buyer approval page, CLI demo, MCP bridge and dispute triage |
-| d70617e | 2026-10-28 14:22 | test: 42 tests ... |
-| 11dd0f4 | 2026-10-28 14:23 | chore: Render blueprint, Dockerfile, screenshots |
+| d70617e | 2026-10-28 14:22 | test: 42 tests covering validation, policy, mock state machine, sandbox REST contract, agent loop, server and MCP |
+| 11dd0f4 | 2026-10-28 14:23 | chore: Render blueprint, Dockerfile, console screenshots; record captured amount in ledger |
 | 5f708d7 | 2026-10-28 14:23 | feat: per-IP rate limit for the hosted demo |
+| f519833 | 2026-10-28 14:24 | docs: README with architecture, judge walkthrough, sandbox setup; provenance statement |
+| 3180212 | 2026-10-28 14:25 | fix: mock dispute message text; clarify sandbox payouts setup |
+| 0c6ddbf | 2026-10-28 14:27 | chore: use a neutral test domain for the new-payee demo |
+| (this commit) | 2026-10-28 | docs: refresh provenance commit table |
 
 Run `git log --format='%h %ad %s' --date=iso` for the current list.
