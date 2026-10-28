@@ -22,6 +22,7 @@
     "mcp": "node src/mcp.ts",
     "smoke:sandbox": "node src/cli.ts smoke",
     "e2e:sandbox": "node scripts/sandbox-e2e.ts",
-    "test": "node --test \"test/*.test.ts\""
+    "test": "node --test \"test/*.test.ts\"",
+    "e2e:llm": "node scripts/llm-e2e.ts"
   }
 }

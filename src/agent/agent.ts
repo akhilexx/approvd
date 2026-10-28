@@ -6,10 +6,18 @@ import { describePolicy } from "../policy.ts";
 import { TOOL_SPECS } from "../tools.ts";
 import { MockPlanner } from "./mockPlanner.ts";
 import { OpenAIPlanner } from "./openaiPlanner.ts";
+import { LlmError } from "./llm.ts";
+import { LlmGuard } from "../guard.ts";
 import type { ChatMsg, Planner } from "./types.ts";
 
-export function makePlanner(cfg: AppConfig): Planner {
-  return cfg.llmMode === "openai" ? new OpenAIPlanner({ baseUrl: cfg.llmBaseUrl, apiKey: cfg.llmApiKey, model: cfg.llmModel }) : new MockPlanner();
+export function makePlanner(cfg: AppConfig, guard?: LlmGuard): Planner {
+  const common = {
+    maxOutputTokens: cfg.llm.maxOutputTokens, timeoutMs: cfg.llm.timeoutMs, maxRetries: cfg.llm.maxRetries,
+    onCall: () => guard?.recordCall(), onUsage: (n: number) => guard?.recordTokens(n),
+  };
+  if (cfg.llmMode === "azure") return new OpenAIPlanner({ provider: "azure", endpoint: cfg.azure.endpoint, apiKey: cfg.azure.apiKey, deployment: cfg.azure.deployment, apiVersion: cfg.azure.apiVersion, wire: cfg.azure.wire, reasoningEffort: cfg.azure.reasoningEffort, model: cfg.azure.deployment, ...common });
+  if (cfg.llmMode === "openai") return new OpenAIPlanner({ baseUrl: cfg.llmBaseUrl, apiKey: cfg.llmApiKey, model: cfg.llmModel, ...common });
+  return new MockPlanner();
 }
 
 export function systemPrompt(cfg: AppConfig): string {
@@ -53,31 +61,67 @@ export function summarize(steps: StepOutcome[]): string {
   }).join("\n");
 }
 
+export interface ChatResult { reply: string; steps: StepOutcome[]; planner: string; notice?: string }
+
 export class Agent {
   engine: Engine; planner: Planner; cfg: AppConfig;
+  /** Offline planner used when the LLM is capped, the breaker is open, or the provider fails before any step ran. */
+  fallback: Planner = new MockPlanner();
+  guard?: LlmGuard;
   sessions = new Map<string, ChatMsg[]>();
-  constructor(cfg: AppConfig, engine: Engine, planner: Planner) { this.cfg = cfg; this.engine = engine; this.planner = planner; }
+  turns = new Map<string, number>();
+  constructor(cfg: AppConfig, engine: Engine, planner: Planner, guard?: LlmGuard) { this.cfg = cfg; this.engine = engine; this.planner = planner; this.guard = guard; }
 
-  async chat(sessionId: string, text: string): Promise<{ reply: string; steps: StepOutcome[]; planner: string }> {
+  async chat(sessionId: string, text: string): Promise<ChatResult> {
+    const lim = this.cfg.limits;
+    const used = this.turns.get(sessionId) ?? 0;
+    if (used >= lim.sessionTurnCap) return { reply: `This demo session reached its ${lim.sessionTurnCap}-message limit. Press Reset demo or open a new tab to continue.`, steps: [], planner: this.planner.name, notice: "session_turn_cap" };
+    this.turns.set(sessionId, used + 1);
+    if (!this.sessions.has(sessionId) && this.sessions.size >= lim.maxSessions) {
+      const oldest = this.sessions.keys().next().value; if (oldest !== undefined) { this.sessions.delete(oldest); this.turns.delete(oldest); }
+    }
     const history = this.sessions.get(sessionId) ?? [{ role: "system", content: systemPrompt(this.cfg) }];
-    history.push({ role: "user", content: text.slice(0, 2000) });
+    history.push({ role: "user", content: text.slice(0, lim.maxInputChars) });
     const steps: StepOutcome[] = [];
     let modelText = "";
+    let notice = "";
+    const usingLlm = this.planner !== this.fallback && !(this.planner instanceof MockPlanner);
+    let planner = this.planner;
+    if (usingLlm && this.guard) { const why = this.guard.blockedReason(); if (why) { planner = this.fallback; notice = `Note: ${why}, so the offline planner handled this message.`; } }
     for (let i = 0; i < 8; i++) {
-      const turn = await this.planner.next(history, TOOL_SPECS, this.engine.refs);
+      let turn;
+      try {
+        turn = await planner.next(history, TOOL_SPECS, this.engine.refs);
+        if (planner !== this.fallback) this.guard?.success();
+      } catch (e: any) {
+        if (planner === this.fallback || !usingLlm) throw e;
+        const kind = e instanceof LlmError ? e.kind : "error";
+        if (kind === "content_filter") { notice = "The AI provider's content filter declined this request. Nothing was executed for it."; break; }
+        this.guard?.failure();
+        if (steps.length === 0) { planner = this.fallback; notice = `Note: the AI planner is unavailable right now (${kind}), so the offline planner handled this message.`; i--; continue; }
+        notice = `Note: the AI planner stopped (${kind}) after ${steps.length} step(s); nothing else was executed.`; break;
+      }
       if (!turn.toolCalls.length) { modelText = turn.text ?? ""; if (modelText) history.push({ role: "assistant", content: modelText }); break; }
       const call = turn.toolCalls[0]; // one at a time, so later steps see earlier results
       history.push({ role: "assistant", content: turn.text ?? null, tool_calls: [call] });
       let args: Record<string, any> = {};
       try { args = JSON.parse(call.function.arguments || "{}"); } catch { args = { __unparseable__: call.function.arguments }; }
-      const out = await this.engine.run(call.function.name, args, `agent:${this.planner.name}`);
+      const out = await this.engine.run(call.function.name, args, `agent:${planner.name}`);
       steps.push(out);
       history.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify({ status: out.status, result: out.result, error: out.error, approval_id: out.approvalId, policy: out.decision?.reasons }) });
+      // Stop the chain as soon as a human is needed or policy said no: the model must not improvise around it.
+      if (out.status === "pending_approval" || out.status === "denied") {
+        if (!usingLlm || planner === this.fallback) break;
+        try { const t = await planner.next(history, [], this.engine.refs); modelText = t.text ?? ""; if (modelText) history.push({ role: "assistant", content: modelText }); this.guard?.success(); } catch { this.guard?.failure(); }
+        break;
+      }
     }
     if (history.length > 60) history.splice(1, history.length - 60);
     this.sessions.set(sessionId, history);
     const facts = summarize(steps);
-    const reply = this.cfg.llmMode === "mock" ? (facts || modelText) : [modelText, facts && `\n—\n${facts}`].filter(Boolean).join("");
-    return { reply: reply || "Done.", steps, planner: this.planner.name };
+    const fellBack = planner === this.fallback && usingLlm;
+    const body = this.cfg.llmMode === "mock" || fellBack ? (facts || modelText) : [modelText, facts && `\n—\n${facts}`].filter(Boolean).join("");
+    const reply = [notice, body].filter(Boolean).join("\n");
+    return { reply: reply || "Done.", steps, planner: planner.name, notice: notice || undefined };
   }
 }

@@ -26,6 +26,7 @@ function say(role, html, steps = []) {
 function render(st) {
   $("#badges").innerHTML = `<span class="pill badge ${st.paypalMode}">PayPal: ${st.paypalMode}</span><span class="pill badge">AI: ${esc(st.planner)}</span>`;
   $("#policy").textContent = st.policy.text;
+  if (st.limits?.maxInputChars) $("#msg").maxLength = st.limits.maxInputChars;
   const pct = Math.min(100, (100 * st.outflowLast24h) / st.policy.dailyOutflowCap);
   $("#bar").style.width = pct + "%"; $("#bar").style.background = pct > 80 ? "var(--bad)" : "var(--acc)";
   $("#outflow").textContent = `Outflow in last 24h: ${st.outflowLast24h} / ${st.policy.dailyOutflowCap} ${st.currency}`;
@@ -44,7 +45,7 @@ const CHIPS = [
   "Refund the rest of it",
   "List open disputes",
   "Draft a reply to the first dispute",
-  "Pay maya@example.com $900 for the photoshoot",
+  "Pay maya@example.com $900 for the photo shoot",
 ];
 $("#chips").innerHTML = CHIPS.map((c) => `<button type="button">${esc(c)}</button>`).join("");
 $("#chips").onclick = (e) => { if (e.target.tagName === "BUTTON") { $("#msg").value = e.target.textContent; $("#msg").focus(); } };

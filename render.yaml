@@ -1,5 +1,6 @@
 # Render Blueprint (https://render.com/docs/blueprint-spec). One free web service.
 # Secrets are marked sync:false so they are entered in the Render dashboard, never committed.
+# Every hosted-demo cap below has a safe default in src/config.ts; the values here just make them visible.
 services:
   - type: web
     name: approvd
@@ -11,6 +12,9 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "24"
+      - key: NODE_ENV
+        value: production
+      # ---- PayPal (sandbox only) ----
       - key: PAYPAL_MODE
         value: sandbox
       - key: PAYPAL_CLIENT_ID
@@ -19,16 +23,26 @@ services:
         sync: false
       - key: PUBLIC_BASE_URL
         sync: false
+      # ---- LLM: Azure OpenAI ----
       - key: LLM_MODE
-        value: openai
-      - key: LLM_BASE_URL
+        value: azure
+      - key: AZURE_OPENAI_ENDPOINT
         sync: false
-      - key: LLM_API_KEY
+      - key: AZURE_OPENAI_API_KEY
         sync: false
-      - key: LLM_MODEL
+      - key: AZURE_OPENAI_DEPLOYMENT
         sync: false
-      - key: DEMO_PASSCODE
-        sync: false
+      - key: AZURE_OPENAI_WIRE
+        value: responses
+      - key: AZURE_OPENAI_REASONING_EFFORT
+        value: low
+      - key: LLM_TIMEOUT_MS
+        value: "30000"
+      - key: LLM_MAX_RETRIES
+        value: "2"
+      - key: LLM_MAX_OUTPUT_TOKENS
+        value: "1200"
+      # ---- Spend policy ----
       - key: POLICY_APPROVAL_THRESHOLD
         value: "50"
       - key: POLICY_MAX_PER_ACTION
@@ -37,3 +51,30 @@ services:
         value: "1000"
       - key: POLICY_PAYEE_ALLOWLIST
         value: "@example.com"
+      # ---- Hosted-demo protections ----
+      - key: DEMO_PASSCODE
+        sync: false
+      - key: CLIENT_IP_HEADER
+        value: true-client-ip
+      - key: CORS_ORIGIN
+        value: ""
+      - key: RATE_LIMIT_PER_MIN
+        value: "30"
+      - key: DAILY_REQUEST_CAP
+        value: "2000"
+      - key: MAX_INPUT_CHARS
+        value: "600"
+      - key: MAX_BODY_BYTES
+        value: "16000"
+      - key: SESSION_TURN_CAP
+        value: "40"
+      - key: MAX_SESSIONS
+        value: "500"
+      - key: LLM_DAILY_CALL_CAP
+        value: "400"
+      - key: LLM_DAILY_TOKEN_CAP
+        value: "600000"
+      - key: LLM_BREAKER_FAILURES
+        value: "3"
+      - key: LLM_BREAKER_COOLDOWN_MS
+        value: "300000"

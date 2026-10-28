@@ -84,5 +84,5 @@ test("OpenAI planner surfaces API errors and needs a key for remote hosts", asyn
   assert.throws(() => new OpenAIPlanner({ baseUrl: "https://api.openai.com/v1", apiKey: "", model: "m" }), /LLM_API_KEY/);
   const bad = (async () => new Response(JSON.stringify({ error: { message: "invalid api key" } }), { status: 401 })) as unknown as typeof fetch;
   const p = new OpenAIPlanner({ baseUrl: "https://x.test/v1", apiKey: "k", model: "m", fetchImpl: bad });
-  await assert.rejects(p.next([], [], {}), /401: invalid api key/);
+  await assert.rejects(p.next([], [], {}), (e: any) => e.kind === "auth" && e.status === 401 && /invalid api key/.test(e.message));
 });

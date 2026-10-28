@@ -18,7 +18,7 @@ async function demo() {
   const r = await say("Send $120 to newvendor@mail.test for packaging");
   const apr = r.steps.find((s) => s.approvalId)?.approvalId;
   if (apr) { const o = await app.engine.approve(apr, "cli-demo"); console.log(`\n(human approves ${apr}) -> ${o.status} batch ${o.result?.batchId ?? ""}`); }
-  await say("Pay maya@example.com $900 for the photoshoot");
+  await say("Pay maya@example.com $900 for the photo shoot");
   await say("Refund $100 on it");
   await say("List open disputes");
   await say("Draft a reply to the first dispute");

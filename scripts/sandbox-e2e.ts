@@ -137,7 +137,7 @@ async function full() {
   const apr = r5.steps.find((s) => s.approvalId)?.approvalId;
   result("agent:payout_needs_approval", !!apr, r5.reply.split("\n")[0]);
   if (apr) { const a = await app.engine.approve(apr, "e2e"); result("agent:approved_payout_executes", a.status === "approved" || a.status === "executed", `${a.status} ${a.result?.batchId ?? a.error ?? ""}`); }
-  const r6 = await app.agent.chat("e2e", "Pay maya@example.com $900 for the photoshoot");
+  const r6 = await app.agent.chat("e2e", "Pay maya@example.com $900 for the photo shoot");
   result("agent:hard_limit_denied", r6.steps[0]?.status === "denied", r6.reply.split("\n")[0]);
   const r7 = await app.agent.chat("e2e", "List open disputes");
   result("agent:list_disputes", r7.steps[0]?.status === "executed", r7.reply.split("\n")[0]);
