@@ -1,0 +1,18 @@
+{
+  "name": "approvd",
+  "version": "0.1.0",
+  "description": "Approvd: a guardrailed AI operations agent for PayPal merchants. Natural-language checkout links, captures, refunds and payouts with spend policies and human approval.",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "engines": { "node": ">=23.6" },
+  "scripts": {
+    "start": "node src/server.ts",
+    "dev": "PAYPAL_MODE=mock LLM_MODE=mock node src/server.ts",
+    "demo": "PAYPAL_MODE=mock LLM_MODE=mock node src/cli.ts demo",
+    "cli": "node src/cli.ts",
+    "mcp": "node src/mcp.ts",
+    "smoke:sandbox": "node src/cli.ts smoke",
+    "test": "node --test \"test/*.test.ts\""
+  }
+}
