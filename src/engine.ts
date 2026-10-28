@@ -89,12 +89,23 @@ export class Engine {
 
   private d(x: Decision) { return { verdict: x.verdict, reasons: x.reasons, amount: x.amount, direction: x.direction }; }
 
+  /** Open dispute on this capture, if any. Refunding a disputed capture would settle the dispute, so policy blocks it. */
+  private async openDisputeFor(captureId: string): Promise<string | undefined> {
+    try {
+      for (const d of (await this.gw.listDisputes()).filter((x) => !/RESOLVED|CLOSED/.test(x.status)).slice(0, 10)) {
+        const full = await this.gw.getDispute(d.id);
+        if (full.captureId === captureId) return d.id;
+      }
+    } catch { /* the dispute check is best effort; the other refund checks still apply */ }
+    return undefined;
+  }
+
   private async decide(call: ToolCall): Promise<Decision> {
     let capture;
     if (call.name === "create_refund") {
       try {
         const c = await this.gw.getCapture(call.args.capture_id);
-        capture = { amount: moneyNum(c.amount), refunded: this.refunded.get(c.captureId) ?? 0, currency: c.amount.currency };
+        capture = { amount: moneyNum(c.amount), refunded: this.refunded.get(c.captureId) ?? 0, currency: c.amount.currency, openDisputeId: await this.openDisputeFor(c.captureId) };
       } catch { capture = undefined; }
     }
     return evaluate(call, this.cfg.policy, { outflowLast24h: this.outflowLast24h(), capture });

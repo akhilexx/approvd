@@ -129,6 +129,19 @@ test("live fixture: agent dispute triage on the live dispute drafts a reply and 
   assert.equal(app.engine.outflowLast24h(), 0);
 });
 
+test("policy: a refund on a capture with an open dispute (the live one) is denied and never reaches PayPal", { skip: !has("get_dispute") && "not recorded yet" }, async () => {
+  const show = load("get_dispute"); const list = load("list_disputes");
+  const disputedCapture = show[0].response.body.disputed_transactions[0].seller_transaction_id;
+  const real = replay([...list, ...show]);
+  let refunds = 0;
+  const gw: any = new Proxy(real, { get: (t: any, k) => k === "getCapture" ? async (id: string) => ({ captureId: id, status: "COMPLETED", amount: { value: "20.00", currency: "USD" } })
+    : k === "refundCapture" ? async () => { refunds++; throw new Error("must not refund"); } : typeof t[k] === "function" ? t[k].bind(t) : t[k] });
+  const app = createApp({ env: { PAYPAL_MODE: "mock", LLM_MODE: "mock" } as any, gateway: gw });
+  const out = await app.engine.run("create_refund", { capture_id: disputedCapture, amount: 5 }, "test");
+  assert.equal(out.status, "denied"); assert.match(out.decision!.reasons.join(" "), /open PayPal dispute PP-R-/);
+  assert.equal(refunds, 0);
+});
+
 test("live fixture: wallet order capture after buyer approval", { skip: !has("capture_order") && "not recorded yet: needs one sandbox buyer approval in a browser" }, async () => {
   const c = load("capture_order"); const id = c[0].request.path.split("/")[4];
   const r = await replay(c).captureOrder(id); assert.equal(r.status, "COMPLETED"); assert.ok(r.captureId);

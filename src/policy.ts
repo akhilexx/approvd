@@ -9,7 +9,7 @@ export interface Decision { verdict: Verdict; reasons: string[]; amount: number;
 export interface PolicyContext {
   outflowLast24h: number;
   /** For refunds: captured amount and how much this app already refunded on that capture. */
-  capture?: { amount: number; refunded: number; currency: string };
+  capture?: { amount: number; refunded: number; currency: string; openDisputeId?: string };
 }
 
 const rank: Record<Verdict, number> = { allow: 0, needs_approval: 1, deny: 2 };
@@ -44,6 +44,7 @@ export function evaluate(call: ToolCall, p: PolicyConfig, ctx: PolicyContext): D
       amount = call.args.amount ?? remaining;
       if (amount > remaining + 1e-9) bump("deny", `refund ${amount} exceeds refundable balance ${remaining}`);
       if (c.refunded > 0) bump("needs_approval", `capture already refunded ${c.refunded} before`);
+      if (c.openDisputeId) bump("deny", `capture has an open PayPal dispute ${c.openDisputeId}; answer it in the Resolution Center instead of refunding here`);
     }
   }
 

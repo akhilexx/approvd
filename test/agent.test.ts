@@ -86,3 +86,18 @@ test("OpenAI planner surfaces API errors and needs a key for remote hosts", asyn
   const p = new OpenAIPlanner({ baseUrl: "https://x.test/v1", apiKey: "k", model: "m", fetchImpl: bad });
   await assert.rejects(p.next([], [], {}), (e: any) => e.kind === "auth" && e.status === 401 && /invalid api key/.test(e.message));
 });
+
+test("refunds on a capture with an open dispute are denied (refunding would settle the dispute); other refunds still work", async () => {
+  const app = mockApp(); const gw = app.gw as MockPayPal;
+  await app.agent.chat("s", "Create a $20 checkout for 1 soy candle for priya@example.com");
+  gw.approve(app.engine.refs.lastOrderId!);
+  await app.agent.chat("s", "Capture it");
+  const disputed = app.engine.refs.lastCaptureId!;
+  gw.disputes.push({ id: "PP-D-TEST1", reason: "MERCHANDISE_OR_SERVICE_NOT_RECEIVED", status: "WAITING_FOR_SELLER_RESPONSE", amount: { value: "20.00", currency: "USD" }, createTime: new Date().toISOString(), captureId: disputed } as any);
+  const r = await app.agent.chat("s", "Refund $5 on it");
+  assert.equal(r.steps[0].status, "denied"); assert.match(r.reply, /open PayPal dispute PP-D-TEST1/);
+  assert.equal(app.engine.outflowLast24h(), 0);
+  gw.disputes[gw.disputes.length - 1].status = "RESOLVED";
+  const ok = await app.agent.chat("s", "Refund $5 on it");
+  assert.equal(ok.steps[0].status, "executed", "a resolved dispute no longer blocks refunds");
+});

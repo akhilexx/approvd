@@ -2,7 +2,7 @@
 
 **An AI back-office agent for small PayPal merchants. You talk to it, it moves money, and the risky moves wait for your click.**
 
-Approvd turns plain requests like *"capture it, then refund $12 for a cracked lid"* or *"pay asha@example.com $20 and ravi@example.com $25 for October deliveries"* into real PayPal REST calls: Orders v2, Payments v2 captures and refunds, Payouts v1 and Disputes v1. Every call the model proposes goes through a **spend-policy engine the model cannot override**. It checks per-action limits, a rolling 24-hour outflow cap, a payee allowlist, refundable balances and duplicate payees. Small, safe actions run on their own. Anything above your threshold or to a new payee goes into an **Approvals** queue, and every attempt lands in an **audit ledger** with its PayPal reference.
+Approvd turns plain requests like *"capture it, then refund $12 for a cracked lid"* or *"pay asha@example.com $20 and ravi@example.com $25 for October deliveries"* into real PayPal REST calls: Orders v2, Payments v2 captures and refunds, Payouts v1 and Disputes v1. Every call the model proposes goes through a **spend-policy engine the model cannot override**. It checks per-action limits, a rolling 24-hour outflow cap, a payee allowlist, refundable balances, open disputes and duplicate payees. Small, safe actions run on their own. Anything above your threshold or to a new payee goes into an **Approvals** queue, and every attempt lands in an **audit ledger** with its PayPal reference.
 
 > Built for the PayPal AI Hackathon (Devpost, Oct–Nov 2026). Runs fully offline in mock mode with no keys, or against the real PayPal sandbox when you add sandbox app credentials to `.env`.
 
@@ -71,7 +71,7 @@ git clone https://github.com/akhilexx/approvd.git && cd approvd
 npm run dev          # mock PayPal + offline planner on http://localhost:8787
 # or, in the terminal only:
 npm run demo         # scripted end-to-end story
-npm test             # 85 tests, no network or keys needed
+npm test             # 87 tests, no network or keys needed
 ```
 
 ### Judge walkthrough: do X, see Y
@@ -245,6 +245,7 @@ docs/            provenance, screenshots
 ## Limitations and honest notes
 
 - State (ledger, approvals) is in memory and resets on restart. That's fine for a demo; a real deployment would use a database and PayPal webhooks.
+- **Refunds on a disputed capture are blocked by policy.** Refunding would settle the buyer's dispute, so the merchant answers it in PayPal's Resolution Center instead. Before each refund, Approvd reads the open disputes (GET only) and denies the refund if one covers that capture. This was checked live, read-only, against the sandbox dispute; tests cover mock mode and the recorded fixture.
 - The dispute feature drafts replies and evidence lists but does not call PayPal's provide-evidence endpoint. That's deliberate: a human sends it.
 - The offline planner only understands the demo phrasings. Use `LLM_MODE=azure` or `openai` for free-form language.
 - The hosted demo is capped (see Hosted-demo protections). When a cap is reached, the offline planner or a polite message answers instead.
