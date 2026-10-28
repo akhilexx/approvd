@@ -100,6 +100,11 @@ export class MockPayPal implements PayPalGateway {
   }
 
   async listDisputes(): Promise<DisputeSummary[]> { return this.disputes; }
+  async getDispute(disputeId: string): Promise<DisputeSummary & { messages?: string[] }> {
+    const d = this.disputes.find((x) => x.id === disputeId);
+    if (!d) throw new PayPalError(404, "RESOURCE_NOT_FOUND", `Dispute ${disputeId} not found.`);
+    return { ...d, messages: [d.reason.includes("NOT_RECEIVED") ? "Buyer: it has been 12 days and nothing arrived." : "Buyer: the colour is completely different from the photos."] };
+  }
 
   private mustOrder(orderId: string): MockOrder {
     const o = this.orders.get(orderId);

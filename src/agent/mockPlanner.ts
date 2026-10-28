@@ -7,6 +7,7 @@ import type { SessionRefs } from "../engine.ts";
 import type { ChatMsg, ChatToolCall, Planner, PlannerTurn } from "./types.ts";
 
 const EMAIL_RE = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+const EMAIL_ONE = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/;
 const AMOUNT_RE = /(?:\$|usd\s*|inr\s*|₹)\s*(\d+(?:[.,]\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*(?:dollars|usd|bucks)\b/gi;
 const ID_RE = /\b(?=[A-Z0-9]*\d)(?=[A-Z0-9]*[A-Z])[A-Z0-9]{10,20}\b/;
 
@@ -40,6 +41,10 @@ export function clauseToCall(c: string, refs: SessionRefs): { name: string; args
   const lc = c.toLowerCase();
   const idm = c.replace(EMAIL_RE, "").match(ID_RE)?.[0];
   const amt = amounts(c.replace(EMAIL_RE, ""))[0]?.v;
+  const dm = c.match(/\bPP-D-[A-Z0-9]+\b/)?.[0];
+  if (/dispute/.test(lc) && (dm || /\b(first|draft|respond|reply|answer)\b/.test(lc))) {
+    const d = dm ?? refs.lastDisputeId; return d ? { name: "get_dispute", args: { dispute_id: d } } : { help: "Which dispute? List disputes first." };
+  }
   if (/dispute/.test(lc)) return { name: "list_disputes", args: {} };
   if (/\b(payout|batch)\b/.test(lc) && /\b(status|check|did|how)\b/.test(lc)) {
     const b = idm ?? refs.lastBatchId; return b ? { name: "get_payout", args: { batch_id: b } } : { help: "Which payout batch? I don't have one yet." };
@@ -50,14 +55,12 @@ export function clauseToCall(c: string, refs: SessionRefs): { name: string; args
     const reason = c.match(/\b(?:for|because)\s+(.+)$/i)?.[1]?.replace(AMOUNT_RE, "").trim();
     return { name: "create_refund", args: { capture_id: cap, ...(amt !== undefined && !/\b(full|fully|entire|whole)\b/.test(lc) ? { amount: amt } : {}), ...(reason ? { reason } : {}) } };
   }
-  if (/\b(pay|send|payout|tip|reimburse)\b/.test(lc) && EMAIL_RE.test(c)) {
-    EMAIL_RE.lastIndex = 0;
+  if (/\b(pay|send|payout|tip|reimburse)\b/.test(lc) && EMAIL_ONE.test(c)) {
     const items = payoutItems(c);
     if (!items.length) return { help: "Who should I pay and how much? e.g. 'pay asha@example.com $40'." };
     const note = c.match(/\bfor\s+([^$@]+?)(?:$|\s+(?:to|and)\s)/i)?.[1]?.trim();
     return { name: "create_payout", args: { items: items.map((i) => ({ ...i, ...(note ? { note } : {}) })) } };
   }
-  EMAIL_RE.lastIndex = 0;
   if (/\bcapture\b/.test(lc)) {
     const o = idm ?? refs.lastOrderId; return o ? { name: "capture_order", args: { order_id: o } } : { help: "Which order should I capture?" };
   }
@@ -65,12 +68,10 @@ export function clauseToCall(c: string, refs: SessionRefs): { name: string; args
     const o = idm ?? refs.lastOrderId; return o ? { name: "get_order", args: { order_id: o } } : { help: "Which order? Give me the order id." };
   }
   if (/\b(checkout|link|charge|invoice|bill|order|sell|request)\b/.test(lc) && amt !== undefined) {
-    const customer = c.match(EMAIL_RE)?.[0] ?? c.match(/\bfor\s+([A-Z][a-z]+)\b/)?.[1];
-    EMAIL_RE.lastIndex = 0;
+    const customer = c.match(EMAIL_ONE)?.[0] ?? c.match(/\bfor\s+([A-Z][a-z]+)\b/)?.[1];
     let description = (c.match(/\bfor\s+(.+)$/i)?.[1] ?? c)
       .replace(EMAIL_RE, "").replace(AMOUNT_RE, "").replace(/\b(a|an|the|checkout|payment|link|create|make|send|please)\b/gi, " ")
       .replace(/\s+/g, " ").replace(/^[\s,:-]+|[\s,:-]+$/g, "");
-    EMAIL_RE.lastIndex = 0;
     if (!description || description.length < 3) description = "Order";
     return { name: "create_order", args: { amount: amt, description: description.slice(0, 127), ...(customer ? { customer } : {}) } };
   }

@@ -3,7 +3,7 @@
 // Every argument is validated here before the policy engine sees it, so a model can't smuggle
 // in malformed amounts or extra fields.
 
-export type ToolName = "create_order" | "get_order" | "capture_order" | "create_refund" | "create_payout" | "get_payout" | "list_disputes";
+export type ToolName = "create_order" | "get_order" | "capture_order" | "create_refund" | "create_payout" | "get_payout" | "list_disputes" | "get_dispute";
 
 export interface ToolCall { id: string; name: ToolName; args: Record<string, any> }
 
@@ -26,6 +26,8 @@ export const TOOL_SPECS: ToolSpec[] = [
     parameters: { type: "object", additionalProperties: false, required: ["batch_id"], properties: { batch_id: { type: "string" } } } },
   { name: "list_disputes", moneyMoving: "none", description: "List open PayPal disputes for the merchant.",
     parameters: { type: "object", additionalProperties: false, properties: {} } },
+  { name: "get_dispute", moneyMoving: "none", description: "Get one dispute with a reason-specific evidence checklist, so you can draft the seller's response for the human to review.",
+    parameters: { type: "object", additionalProperties: false, required: ["dispute_id"], properties: { dispute_id: { type: "string" } } } },
 ];
 
 export const specOf = (name: string) => TOOL_SPECS.find((t) => t.name === name);
@@ -73,5 +75,6 @@ export function validateArgs(name: string, args: Record<string, any> = {}): Reco
     }
     case "get_payout": return { batch_id: id(args.batch_id, "batch_id") };
     case "list_disputes": return {};
+    case "get_dispute": return { dispute_id: id(args.dispute_id, "dispute_id") };
   }
 }

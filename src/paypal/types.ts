@@ -43,6 +43,7 @@ export interface PayPalGateway {
   createPayouts(items: PayoutItemInput[], currency: string, senderBatchId: string, subject: string): Promise<PayoutBatchResult>;
   getPayoutBatch(batchId: string): Promise<PayoutBatchResult>;
   listDisputes(): Promise<DisputeSummary[]>;
+  getDispute(disputeId: string): Promise<DisputeSummary & { messages?: string[] }>;
 }
 
 export class PayPalError extends Error {

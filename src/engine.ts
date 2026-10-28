@@ -17,7 +17,14 @@ export interface Approval { id: string; createdAt: string; call: ToolCall; decis
 
 export interface StepOutcome { call: ToolCall; status: LedgerEntry["status"]; decision?: Decision; result?: any; error?: string; approvalId?: string }
 
-export interface SessionRefs { lastOrderId?: string; lastCaptureId?: string; lastBatchId?: string; lastApproveUrl?: string }
+export interface SessionRefs { lastOrderId?: string; lastCaptureId?: string; lastBatchId?: string; lastApproveUrl?: string; lastDisputeId?: string }
+
+export function evidenceFor(reason: string): string[] {
+  if (/NOT_RECEIVED/.test(reason)) return ["Carrier tracking number and carrier name", "Proof of delivery to the buyer's PayPal address", "Shipping date and promised delivery window", "Any buyer messages acknowledging the shipment"];
+  if (/NOT_AS_DESCRIBED/.test(reason)) return ["Listing text and photos at the time of purchase", "Photos of the item as shipped", "Your return/replacement offer to the buyer", "Prior messages showing good-faith resolution"];
+  if (/UNAUTHORISED|UNAUTHORIZED/.test(reason)) return ["Device/IP or login evidence for the purchase", "Delivery confirmation to the account address", "Past successful orders from the same buyer"];
+  return ["Order details and invoice", "Communication history with the buyer", "Your refund or return policy"];
+}
 
 export class Engine {
   cfg: AppConfig; gw: PayPalGateway;
@@ -132,11 +139,12 @@ export class Engine {
         return r;
       }
       case "create_payout": {
-        const b = await this.gw.createPayouts(a.items, cur, `approvd-${Date.now()}`, a.memo ?? "You have a payout");
+        const b = await this.gw.createPayouts(a.items, cur, `approvd-${Date.now()}-${randomUUID().slice(0, 8)}`, a.memo ?? "You have a payout");
         this.refs.lastBatchId = b.batchId; return b;
       }
       case "get_payout": { const b = await this.gw.getPayoutBatch(a.batch_id); this.refs.lastBatchId = b.batchId; return b; }
-      case "list_disputes": return this.gw.listDisputes();
+      case "list_disputes": { const ds = await this.gw.listDisputes(); if (ds[0]) this.refs.lastDisputeId = ds[0].id; return ds; }
+      case "get_dispute": { const d = await this.gw.getDispute(a.dispute_id); return { ...d, evidenceChecklist: evidenceFor(d.reason), note: "Draft only. Approvd never submits dispute evidence automatically." }; }
     }
   }
 }

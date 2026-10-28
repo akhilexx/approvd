@@ -100,4 +100,8 @@ export class SandboxPayPal implements PayPalGateway {
     const j = await this.call("GET", "/v1/customer/disputes?page_size=10");
     return (j.items ?? []).map((d: any) => ({ id: d.dispute_id, reason: d.reason, status: d.status, amount: m(d.dispute_amount), createTime: d.create_time }));
   }
+  async getDispute(disputeId: string) {
+    const d = await this.call("GET", `/v1/customer/disputes/${encodeURIComponent(disputeId)}`);
+    return { id: d.dispute_id, reason: d.reason, status: d.status, amount: m(d.dispute_amount), createTime: d.create_time, messages: (d.messages ?? []).map((x: any) => `${x.posted_by}: ${x.content}`) };
+  }
 }

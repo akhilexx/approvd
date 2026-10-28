@@ -21,13 +21,14 @@ export function allowlisted(email: string, allow: string[]): boolean {
 
 export function evaluate(call: ToolCall, p: PolicyConfig, ctx: PolicyContext): Decision {
   const spec = specOf(call.name);
-  const reasons: string[] = [];
+  const found: { v: Verdict; why: string }[] = [];
   let verdict: Verdict = "allow";
-  const bump = (v: Verdict, why: string) => { reasons.push(why); if (rank[v] > rank[verdict]) verdict = v; };
+  const bump = (v: Verdict, why: string) => { found.push({ v, why }); if (rank[v] > rank[verdict]) verdict = v; };
   const direction = spec?.moneyMoving ?? "none";
   let amount = 0;
 
   if (!spec) return { verdict: "deny", reasons: [`unknown tool ${call.name}`], amount, direction };
+  const reasons: string[] = [];
   if (p.blockedTools.includes(call.name)) bump("deny", `${call.name} is blocked by policy`);
 
   if (call.name === "create_order") {
@@ -61,6 +62,8 @@ export function evaluate(call: ToolCall, p: PolicyConfig, ctx: PolicyContext): D
     if (amount > p.approvalThreshold) bump("needs_approval", `${amount} is above the ${p.approvalThreshold} auto-approve threshold`);
   }
 
+  // Report only the reasons that drove the final verdict (a denial shouldn't list "needs approval" noise).
+  for (const f of found) if (f.v === verdict) reasons.push(f.why);
   if (!reasons.length) reasons.push(direction === "none" ? "read-only" : "within policy");
   return { verdict, reasons, amount, direction };
 }
