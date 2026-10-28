@@ -22,7 +22,7 @@ A one- or two-person online shop spends real time in the PayPal dashboard sendin
 | "Check the status of that order" | Looks up the order | `GET /v2/checkout/orders/{id}` |
 | "Capture it, then refund $12 for a cracked lid" | Two chained steps: capture, then a partial refund with a note to the payer | `POST /v2/checkout/orders/{id}/capture`, `GET /v2/payments/captures/{id}`, `POST /v2/payments/captures/{id}/refund` |
 | "Pay asha@example.com $20 and ravi@example.com $25" | Batch payout, auto-approved (allowlisted, under threshold) | `POST /v1/payments/payouts` |
-| "Send $120 to newvendor@gmail.com" | Queued for approval (new payee, above $50) and executed only after you click Approve | `POST /v1/payments/payouts` |
+| "Send $120 to newvendor@mail.test" | Queued for approval (new payee, above $50) and executed only after you click Approve | `POST /v1/payments/payouts` |
 | "Pay maya@example.com $900" | Refused: above the hard $500 per-action limit | none |
 | "Refund $100 on it" | Refused: more than the refundable balance | `GET /v2/payments/captures/{id}` |
 | "List open disputes" / "Draft a reply to the first dispute" | Lists disputes, pulls one, and drafts a reply with a reason-specific evidence checklist. Draft only, never submitted | `GET /v1/customer/disputes`, `GET /v1/customer/disputes/{id}` |
@@ -82,7 +82,7 @@ Open http://localhost:8787 and click the suggestion chips in order (or type them
 2. Click the approval link. You see the **simulated buyer approval page** in mock mode (in sandbox mode it's the real PayPal sandbox checkout). Click *Approve payment as sandbox buyer*, or click **Simulate buyer approval of last checkout** in the Policy card.
 3. **"Capture it, then refund $12 for a cracked lid"**. You see two steps: the capture (with a capture id) and a $12 refund. The outflow meter moves to 12.
 4. **"Pay asha@example.com $20 and ravi@example.com $25 for October deliveries"**. This runs automatically because both payees are allowlisted and the total is under $50.
-5. **"Send $120 to newvendor@gmail.com for packaging"**. The request goes to **Approvals** with the reasons (*payee not on allowlist; above the 50 auto-approve threshold*). Click **Approve** to see the payout batch id, or **Reject** to send nothing.
+5. **"Send $120 to newvendor@mail.test for packaging"**. The request goes to **Approvals** with the reasons (*payee not on allowlist; above the 50 auto-approve threshold*). Click **Approve** to see the payout batch id, or **Reject** to send nothing.
 6. **"Pay maya@example.com $900 for the photoshoot"**. The request is **denied** (*above the hard 500 per-action limit*) and logged in the ledger.
 7. **"Refund the rest of it"**. Refunds the remaining $33 (it needs approval because the capture was already partly refunded).
 8. **"List open disputes"**, then **"Draft a reply to the first dispute"**. You get the buyer's message, a polite draft reply and an evidence checklist. Nothing is submitted.

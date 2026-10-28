@@ -40,7 +40,7 @@ const CHIPS = [
   "Check the status of that order",
   "Capture it, then refund $12 for a cracked lid",
   "Pay asha@example.com $20 and ravi@example.com $25 for October deliveries",
-  "Send $120 to newvendor@gmail.com for packaging",
+  "Send $120 to newvendor@mail.test for packaging",
   "Refund the rest of it",
   "List open disputes",
   "Draft a reply to the first dispute",

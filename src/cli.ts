@@ -15,7 +15,7 @@ async function demo() {
   else { console.log("\nOpen the approval link above as your sandbox buyer, then press Enter."); await new Promise((r) => process.stdin.once("data", r)); }
   await say("Capture it, then refund $12 for a cracked lid");
   await say("Pay asha@example.com $20 and ravi@example.com $25 for October deliveries");
-  const r = await say("Send $120 to newvendor@gmail.com for packaging");
+  const r = await say("Send $120 to newvendor@mail.test for packaging");
   const apr = r.steps.find((s) => s.approvalId)?.approvalId;
   if (apr) { const o = await app.engine.approve(apr, "cli-demo"); console.log(`\n(human approves ${apr}) -> ${o.status} batch ${o.result?.batchId ?? ""}`); }
   await say("Pay maya@example.com $900 for the photoshoot");
