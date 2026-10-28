@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-10-28T17:08:12.502Z",
+  "recordedAt": "2026-10-28T17:26:26.918Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
@@ -15,7 +15,7 @@
           "access_token": "[REDACTED]",
           "token_type": "Bearer",
           "app_id": "[REDACTED]",
-          "expires_in": 32310,
+          "expires_in": 31166,
           "nonce": "[REDACTED]"
         }
       }

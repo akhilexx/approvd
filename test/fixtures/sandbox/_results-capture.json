@@ -1,0 +1,41 @@
+{
+  "ranAt": "2026-10-28T17:26:26.919Z",
+  "mode": "capture",
+  "results": [
+    {
+      "step": "capture_order",
+      "ok": true,
+      "detail": "order 7HM6591139531114M -> capture 7MJ08938JG916252M COMPLETED 45.00 USD"
+    },
+    {
+      "step": "capture_order_idempotent_retry",
+      "ok": true,
+      "detail": "same PayPal-Request-Id returned capture 7MJ08938JG916252M"
+    },
+    {
+      "step": "refund_partial",
+      "ok": true,
+      "detail": "1CA09702W72741131 COMPLETED 1.00"
+    },
+    {
+      "step": "get_capture_after_partial",
+      "ok": true,
+      "detail": "capture status PARTIALLY_REFUNDED"
+    },
+    {
+      "step": "refund_full_remainder",
+      "ok": true,
+      "detail": "0LL50568GP2912229 COMPLETED 44.00"
+    },
+    {
+      "step": "get_capture_after_full",
+      "ok": true,
+      "detail": "capture status REFUNDED"
+    },
+    {
+      "step": "refund_over_limit_rejected",
+      "ok": true,
+      "detail": "422 CAPTURE_FULLY_REFUNDED: The capture has already been fully refunded"
+    }
+  ]
+}

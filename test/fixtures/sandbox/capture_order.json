@@ -1,0 +1,127 @@
+{
+  "recordedAt": "2026-10-28T17:26:26.918Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v2/checkout/orders/7HM6591139531114M/capture",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {}
+      },
+      "response": {
+        "status": 201,
+        "body": {
+          "id": "7HM6591139531114M",
+          "intent": "CAPTURE",
+          "status": "COMPLETED",
+          "payment_source": {
+            "paypal": {
+              "email_address": "[REDACTED]",
+              "account_id": "REDACTED_ID",
+              "account_status": "VERIFIED",
+              "name": {
+                "given_name": "John",
+                "surname": "Doe"
+              },
+              "address": {
+                "country_code": "US"
+              }
+            }
+          },
+          "purchase_units": [
+            {
+              "reference_id": "default",
+              "amount": {
+                "currency_code": "USD",
+                "value": "45.00"
+              },
+              "payee": {
+                "email_address": "[REDACTED]",
+                "merchant_id": "REDACTED_ID",
+                "display_data": {
+                  "brand_name": "Approvd demo store"
+                }
+              },
+              "description": "2 soy candles (Approvd sandbox e2e)",
+              "payments": {
+                "captures": [
+                  {
+                    "id": "7MJ08938JG916252M",
+                    "status": "COMPLETED",
+                    "amount": {
+                      "currency_code": "USD",
+                      "value": "45.00"
+                    },
+                    "final_capture": true,
+                    "seller_protection": {
+                      "status": "ELIGIBLE",
+                      "dispute_categories": [
+                        "ITEM_NOT_RECEIVED",
+                        "UNAUTHORIZED_TRANSACTION"
+                      ]
+                    },
+                    "seller_receivable_breakdown": {
+                      "gross_amount": {
+                        "currency_code": "USD",
+                        "value": "45.00"
+                      },
+                      "paypal_fee": {
+                        "currency_code": "USD",
+                        "value": "2.06"
+                      },
+                      "net_amount": {
+                        "currency_code": "USD",
+                        "value": "42.94"
+                      }
+                    },
+                    "links": [
+                      {
+                        "href": "https://api.sandbox.paypal.com/v2/payments/captures/7MJ08938JG916252M",
+                        "rel": "self",
+                        "method": "GET"
+                      },
+                      {
+                        "href": "https://api.sandbox.paypal.com/v2/payments/captures/7MJ08938JG916252M/refund",
+                        "rel": "refund",
+                        "method": "POST"
+                      },
+                      {
+                        "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7HM6591139531114M",
+                        "rel": "up",
+                        "method": "GET"
+                      }
+                    ],
+                    "create_time": "2026-10-28T17:26:18Z",
+                    "update_time": "2026-10-28T17:26:18Z"
+                  }
+                ]
+              }
+            }
+          ],
+          "payer": {
+            "name": {
+              "given_name": "John",
+              "surname": "Doe"
+            },
+            "email_address": "[REDACTED]",
+            "payer_id": "REDACTED_ID",
+            "address": {
+              "country_code": "US"
+            }
+          },
+          "create_time": "2026-10-28T17:05:48Z",
+          "update_time": "2026-10-28T17:26:18Z",
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7HM6591139531114M",
+              "rel": "self",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 {
-  "recordedAt": "2026-10-28T17:08:12.503Z",
+  "recordedAt": "2026-10-28T17:26:26.919Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
       "request": {
         "method": "POST",
-        "path": "/v2/payments/captures/7JL59317JX080273J/refund",
+        "path": "/v2/payments/captures/7MJ08938JG916252M/refund",
         "paypalRequestId": "<set>",
         "prefer": "return=representation",
         "body": {
@@ -19,7 +19,7 @@
       "response": {
         "status": 201,
         "body": {
-          "id": "0VN52360XA333393A",
+          "id": "1CA09702W72741131",
           "amount": {
             "currency_code": "USD",
             "value": "1.00"
@@ -44,16 +44,16 @@
             }
           },
           "status": "COMPLETED",
-          "create_time": "2026-10-28T10:07:24-07:00",
-          "update_time": "2026-10-28T10:07:24-07:00",
+          "create_time": "2026-10-28T10:26:21-07:00",
+          "update_time": "2026-10-28T10:26:21-07:00",
           "links": [
             {
-              "href": "https://api.sandbox.paypal.com/v2/payments/refunds/0VN52360XA333393A",
+              "href": "https://api.sandbox.paypal.com/v2/payments/refunds/1CA09702W72741131",
               "rel": "self",
               "method": "GET"
             },
             {
-              "href": "https://api.sandbox.paypal.com/v2/payments/captures/7JL59317JX080273J",
+              "href": "https://api.sandbox.paypal.com/v2/payments/captures/7MJ08938JG916252M",
               "rel": "up",
               "method": "GET"
             }

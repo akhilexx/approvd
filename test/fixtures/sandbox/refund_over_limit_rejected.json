@@ -1,11 +1,11 @@
 {
-  "recordedAt": "2026-10-28T17:08:12.503Z",
+  "recordedAt": "2026-10-28T17:26:26.919Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
       "request": {
         "method": "POST",
-        "path": "/v2/payments/captures/7JL59317JX080273J/refund",
+        "path": "/v2/payments/captures/7MJ08938JG916252M/refund",
         "paypalRequestId": "<set>",
         "prefer": "return=representation",
         "body": {
@@ -20,7 +20,7 @@
         "body": {
           "name": "UNPROCESSABLE_ENTITY",
           "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
-          "debug_id": "f7216805321d1",
+          "debug_id": "ca51ba53cdea6",
           "details": [
             {
               "issue": "CAPTURE_FULLY_REFUNDED",

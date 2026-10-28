@@ -1,69 +1,68 @@
 {
-  "recordedAt": "2026-10-28T17:08:12.503Z",
+  "recordedAt": "2026-10-28T17:26:26.919Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
       "request": {
         "method": "GET",
-        "path": "/v2/payments/captures/7JL59317JX080273J",
+        "path": "/v2/payments/captures/7MJ08938JG916252M",
         "prefer": "return=representation"
       },
       "response": {
         "status": 200,
         "body": {
-          "id": "7JL59317JX080273J",
+          "id": "7MJ08938JG916252M",
           "amount": {
             "currency_code": "USD",
-            "value": "10.00"
+            "value": "45.00"
           },
           "final_capture": true,
           "seller_protection": {
-            "status": "NOT_ELIGIBLE"
+            "status": "ELIGIBLE",
+            "dispute_categories": [
+              "ITEM_NOT_RECEIVED",
+              "UNAUTHORIZED_TRANSACTION"
+            ]
           },
           "seller_receivable_breakdown": {
             "gross_amount": {
               "currency_code": "USD",
-              "value": "10.00"
+              "value": "45.00"
             },
             "paypal_fee": {
               "currency_code": "USD",
-              "value": "0.75"
+              "value": "2.06"
             },
             "net_amount": {
               "currency_code": "USD",
-              "value": "9.25"
+              "value": "42.94"
             }
           },
           "status": "REFUNDED",
-          "processor_response": {
-            "avs_code": "",
-            "cvv_code": "M",
-            "response_code": "0000"
-          },
           "supplementary_data": {
             "related_ids": {
-              "order_id": "02W52954P4007762J"
+              "order_id": "7HM6591139531114M"
             }
           },
           "payee": {
             "email_address": "[REDACTED]",
             "merchant_id": "REDACTED_ID"
           },
-          "create_time": "2026-10-28T17:07:20Z",
-          "update_time": "2026-10-28T17:07:29Z",
+          "create_time": "2026-10-28T17:26:18Z",
+          "update_time": "2026-10-28T17:26:24Z",
           "links": [
             {
-              "href": "https://api.sandbox.paypal.com/v2/payments/captures/7JL59317JX080273J",
+              "href": "https://api.sandbox.paypal.com/v2/payments/captures/7MJ08938JG916252M",
               "rel": "self",
               "method": "GET"
             },
             {
-              "href": "https://api.sandbox.paypal.com/v2/payments/captures/7JL59317JX080273J/refund",
+              "href": "https://api.sandbox.paypal.com/v2/payments/captures/7MJ08938JG916252M/refund",
               "rel": "refund",
               "method": "POST"
             },
             {
-              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/02W52954P4007762J",
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7HM6591139531114M",
               "rel": "up",
               "method": "GET"
             }
