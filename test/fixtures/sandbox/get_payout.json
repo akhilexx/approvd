@@ -1,0 +1,690 @@
+{
+  "recordedAt": "2026-10-28T17:08:12.503Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/payments/payouts/C9TGC6BQ5NMDC",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "PENDING",
+            "time_created": "2026-10-28T17:07:34Z",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            },
+            "funding_source": "BALANCE",
+            "amount": {
+              "currency": "USD",
+              "value": "3.75"
+            }
+          },
+          "items": [
+            {
+              "payout_item_id": "KNDHRPXTRW7ZG",
+              "transaction_status": "PENDING",
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "2.50"
+                },
+                "note": "Approvd e2e courier payout",
+                "receiver": "[REDACTED]",
+                "sender_item_id": "approvd-e2e-1793207253063-0",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/KNDHRPXTRW7ZG",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            },
+            {
+              "payout_item_id": "P7SHMXQH3QKMY",
+              "transaction_status": "PENDING",
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "1.25"
+                },
+                "note": "Approvd e2e unclaimed payout",
+                "receiver": "unclaimed-courier@example.com",
+                "sender_item_id": "approvd-e2e-1793207253063-1",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/P7SHMXQH3QKMY",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC?page_size=1000&page=1",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/payments/payouts/C9TGC6BQ5NMDC",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "PENDING",
+            "time_created": "2026-10-28T17:07:34Z",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            },
+            "funding_source": "BALANCE",
+            "amount": {
+              "currency": "USD",
+              "value": "3.75"
+            }
+          },
+          "items": [
+            {
+              "payout_item_id": "KNDHRPXTRW7ZG",
+              "transaction_status": "PENDING",
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "2.50"
+                },
+                "note": "Approvd e2e courier payout",
+                "receiver": "[REDACTED]",
+                "sender_item_id": "approvd-e2e-1793207253063-0",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/KNDHRPXTRW7ZG",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            },
+            {
+              "payout_item_id": "P7SHMXQH3QKMY",
+              "transaction_status": "PENDING",
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "1.25"
+                },
+                "note": "Approvd e2e unclaimed payout",
+                "receiver": "unclaimed-courier@example.com",
+                "sender_item_id": "approvd-e2e-1793207253063-1",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/P7SHMXQH3QKMY",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC?page_size=1000&page=1",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/payments/payouts/C9TGC6BQ5NMDC",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "PENDING",
+            "time_created": "2026-10-28T17:07:34Z",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            },
+            "funding_source": "BALANCE",
+            "amount": {
+              "currency": "USD",
+              "value": "3.75"
+            }
+          },
+          "items": [
+            {
+              "payout_item_id": "KNDHRPXTRW7ZG",
+              "transaction_status": "PENDING",
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "2.50"
+                },
+                "note": "Approvd e2e courier payout",
+                "receiver": "[REDACTED]",
+                "sender_item_id": "approvd-e2e-1793207253063-0",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/KNDHRPXTRW7ZG",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            },
+            {
+              "payout_item_id": "P7SHMXQH3QKMY",
+              "transaction_status": "PENDING",
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "1.25"
+                },
+                "note": "Approvd e2e unclaimed payout",
+                "receiver": "unclaimed-courier@example.com",
+                "sender_item_id": "approvd-e2e-1793207253063-1",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/P7SHMXQH3QKMY",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC?page_size=1000&page=1",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/payments/payouts/C9TGC6BQ5NMDC",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "PROCESSING",
+            "time_created": "2026-10-28T17:07:34Z",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            },
+            "funding_source": "BALANCE",
+            "amount": {
+              "currency": "USD",
+              "value": "3.75"
+            },
+            "fees": {
+              "currency": "USD",
+              "value": "0.50"
+            }
+          },
+          "items": [
+            {
+              "payout_item_id": "KNDHRPXTRW7ZG",
+              "transaction_status": "PENDING",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "2.50"
+                },
+                "note": "Approvd e2e courier payout",
+                "receiver": "[REDACTED]",
+                "sender_item_id": "approvd-e2e-1793207253063-0",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/KNDHRPXTRW7ZG",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            },
+            {
+              "payout_item_id": "P7SHMXQH3QKMY",
+              "transaction_status": "PENDING",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "1.25"
+                },
+                "note": "Approvd e2e unclaimed payout",
+                "receiver": "unclaimed-courier@example.com",
+                "sender_item_id": "approvd-e2e-1793207253063-1",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/P7SHMXQH3QKMY",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC?page_size=1000&page=1",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/payments/payouts/C9TGC6BQ5NMDC",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "PROCESSING",
+            "time_created": "2026-10-28T17:07:34Z",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            },
+            "funding_source": "BALANCE",
+            "amount": {
+              "currency": "USD",
+              "value": "3.75"
+            },
+            "fees": {
+              "currency": "USD",
+              "value": "0.50"
+            }
+          },
+          "items": [
+            {
+              "payout_item_id": "KNDHRPXTRW7ZG",
+              "transaction_status": "PENDING",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "2.50"
+                },
+                "note": "Approvd e2e courier payout",
+                "receiver": "[REDACTED]",
+                "sender_item_id": "approvd-e2e-1793207253063-0",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/KNDHRPXTRW7ZG",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            },
+            {
+              "payout_item_id": "P7SHMXQH3QKMY",
+              "transaction_status": "PENDING",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "1.25"
+                },
+                "note": "Approvd e2e unclaimed payout",
+                "receiver": "unclaimed-courier@example.com",
+                "sender_item_id": "approvd-e2e-1793207253063-1",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/P7SHMXQH3QKMY",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC?page_size=1000&page=1",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/payments/payouts/C9TGC6BQ5NMDC",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "PROCESSING",
+            "time_created": "2026-10-28T17:07:34Z",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            },
+            "funding_source": "BALANCE",
+            "amount": {
+              "currency": "USD",
+              "value": "3.75"
+            },
+            "fees": {
+              "currency": "USD",
+              "value": "0.50"
+            }
+          },
+          "items": [
+            {
+              "payout_item_id": "KNDHRPXTRW7ZG",
+              "transaction_id": "1C2043827E394363T",
+              "activity_id": "43H15434UV338154D",
+              "transaction_status": "SUCCESS",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "2.50"
+                },
+                "note": "Approvd e2e courier payout",
+                "receiver": "[REDACTED]",
+                "sender_item_id": "approvd-e2e-1793207253063-0",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "time_processed": "2026-10-28T17:07:59Z",
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/KNDHRPXTRW7ZG",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            },
+            {
+              "payout_item_id": "P7SHMXQH3QKMY",
+              "transaction_id": "7P553612SN879771E",
+              "activity_id": "72D65713RD865132P",
+              "transaction_status": "UNCLAIMED",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "1.25"
+                },
+                "note": "Approvd e2e unclaimed payout",
+                "receiver": "unclaimed-courier@example.com",
+                "sender_item_id": "approvd-e2e-1793207253063-1",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "time_processed": "2026-10-28T17:07:59Z",
+              "errors": {
+                "name": "RECEIVER_UNREGISTERED",
+                "message": "The recipient for this payout does not have an account. A link to sign up for an account was sent to the recipient. However, if the recipient does not claim this payout within 30 days, the funds will be returned to your account.",
+                "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
+                "details": [],
+                "links": []
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/P7SHMXQH3QKMY",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC?page_size=1000&page=1",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/payments/payouts/C9TGC6BQ5NMDC",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "SUCCESS",
+            "time_created": "2026-10-28T17:07:34Z",
+            "time_completed": "2026-10-28T17:08:07Z",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            },
+            "funding_source": "BALANCE",
+            "amount": {
+              "currency": "USD",
+              "value": "3.75"
+            },
+            "fees": {
+              "currency": "USD",
+              "value": "0.50"
+            }
+          },
+          "items": [
+            {
+              "payout_item_id": "KNDHRPXTRW7ZG",
+              "transaction_id": "1C2043827E394363T",
+              "activity_id": "43H15434UV338154D",
+              "transaction_status": "SUCCESS",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "2.50"
+                },
+                "note": "Approvd e2e courier payout",
+                "receiver": "[REDACTED]",
+                "sender_item_id": "approvd-e2e-1793207253063-0",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "time_processed": "2026-10-28T17:07:59Z",
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/KNDHRPXTRW7ZG",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            },
+            {
+              "payout_item_id": "P7SHMXQH3QKMY",
+              "transaction_id": "7P553612SN879771E",
+              "activity_id": "72D65713RD865132P",
+              "transaction_status": "UNCLAIMED",
+              "payout_item_fee": {
+                "currency": "USD",
+                "value": "0.25"
+              },
+              "payout_batch_id": "C9TGC6BQ5NMDC",
+              "payout_item": {
+                "recipient_type": "EMAIL",
+                "amount": {
+                  "currency": "USD",
+                  "value": "1.25"
+                },
+                "note": "Approvd e2e unclaimed payout",
+                "receiver": "unclaimed-courier@example.com",
+                "sender_item_id": "approvd-e2e-1793207253063-1",
+                "recipient_wallet": "PAYPAL",
+                "purpose": "GOODS"
+              },
+              "time_processed": "2026-10-28T17:07:59Z",
+              "errors": {
+                "name": "RECEIVER_UNREGISTERED",
+                "message": "The recipient for this payout does not have an account. A link to sign up for an account was sent to the recipient. However, if the recipient does not claim this payout within 30 days, the funds will be returned to your account.",
+                "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
+                "details": [],
+                "links": []
+              },
+              "links": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts-item/P7SHMXQH3QKMY",
+                  "rel": "item",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC?page_size=1000&page=1",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

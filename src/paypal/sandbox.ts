@@ -50,8 +50,11 @@ export class SandboxPayPal implements PayPalGateway {
     const text = await res.text();
     const json: any = text ? JSON.parse(text) : {};
     if (!res.ok) {
-      const issue = json.details?.[0]?.issue ?? json.name ?? "PAYPAL_ERROR";
-      const msg = json.details?.[0]?.description ?? json.message ?? `PayPal ${res.status}`;
+      // Orders/Payments put a code in details[0].issue; Payouts puts a sentence there and the code in `name`.
+      const d0 = json.details?.[0];
+      const codeLike = typeof d0?.issue === "string" && /^[A-Z0-9_]+$/.test(d0.issue);
+      const issue = (codeLike ? d0.issue : json.name) ?? "PAYPAL_ERROR";
+      const msg = (codeLike ? d0?.description ?? json.message : [d0?.issue, json.message].filter(Boolean).join(". ")) || `PayPal ${res.status}`;
       throw new PayPalError(res.status, issue, SETUP_HINTS[issue] ? `${msg} ${SETUP_HINTS[issue]}` : msg, json.debug_id);
     }
     return json;

@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "recordedAt": "2026-10-28T17:08:12.503Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
@@ -36,7 +36,7 @@
       "response": {
         "status": 200,
         "body": {
-          "id": "8HV15214WM9593842",
+          "id": "2YE5604897444383S",
           "intent": "CAPTURE",
           "status": "PAYER_ACTION_REQUIRED",
           "payment_source": {
@@ -61,12 +61,12 @@
           ],
           "links": [
             {
-              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8HV15214WM9593842",
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/2YE5604897444383S",
               "rel": "self",
               "method": "GET"
             },
             {
-              "href": "https://www.sandbox.paypal.com/checkoutnow?token=8HV15214WM9593842",
+              "href": "https://www.sandbox.paypal.com/checkoutnow?token=2YE5604897444383S",
               "rel": "payer-action",
               "method": "GET"
             }
@@ -77,13 +77,13 @@
     {
       "request": {
         "method": "GET",
-        "path": "/v2/checkout/orders/8HV15214WM9593842",
+        "path": "/v2/checkout/orders/2YE5604897444383S",
         "prefer": "return=representation"
       },
       "response": {
         "status": 200,
         "body": {
-          "id": "8HV15214WM9593842",
+          "id": "2YE5604897444383S",
           "intent": "CAPTURE",
           "status": "PAYER_ACTION_REQUIRED",
           "payment_source": {
@@ -107,15 +107,15 @@
               "description": "2 soy candles for"
             }
           ],
-          "create_time": "2026-10-28T16:59:29Z",
+          "create_time": "2026-10-28T17:08:10Z",
           "links": [
             {
-              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8HV15214WM9593842",
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/2YE5604897444383S",
               "rel": "self",
               "method": "GET"
             },
             {
-              "href": "https://www.sandbox.paypal.com/checkoutnow?token=8HV15214WM9593842",
+              "href": "https://www.sandbox.paypal.com/checkoutnow?token=2YE5604897444383S",
               "rel": "payer-action",
               "method": "GET"
             }
@@ -126,7 +126,7 @@
     {
       "request": {
         "method": "POST",
-        "path": "/v2/checkout/orders/8HV15214WM9593842/capture",
+        "path": "/v2/checkout/orders/2YE5604897444383S/capture",
         "paypalRequestId": "<set>",
         "prefer": "return=representation",
         "body": {}
@@ -142,7 +142,7 @@
             }
           ],
           "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
-          "debug_id": "ca51b7dc8ddad",
+          "debug_id": "ca51b8a807f02",
           "links": [
             {
               "href": "https://developer.paypal.com/api/rest/reference/orders/v2/errors/#ORDER_NOT_APPROVED",
@@ -161,7 +161,7 @@
         "prefer": "return=representation",
         "body": {
           "sender_batch_header": {
-            "sender_batch_id": "approvd-1793206770443-3efd9352",
+            "sender_batch_id": "approvd-1793207291386-f12d5a1e",
             "email_subject": "You have a payout",
             "email_message": "Sent by Approvd (sandbox demo)."
           },
@@ -170,7 +170,7 @@
               "recipient_type": "EMAIL",
               "receiver": "asha@example.com",
               "note": "October deliveries",
-              "sender_item_id": "approvd-1793206770443-3efd9352-0",
+              "sender_item_id": "approvd-1793207291386-f12d5a1e-0",
               "amount": {
                 "value": "2.00",
                 "currency": "USD"
@@ -180,13 +180,25 @@
         }
       },
       "response": {
-        "status": 403,
+        "status": 201,
         "body": {
-          "name": "PAYOUT_NOT_AVAILABLE",
-          "message": "You live in a country that is not allowed to send this payout.",
-          "debug_id": "f72137922d4c1",
-          "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
-          "links": []
+          "batch_header": {
+            "payout_batch_id": "XE66HELXRC5GG",
+            "batch_status": "PENDING",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-1793207291386-f12d5a1e",
+              "email_subject": "You have a payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            }
+          },
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/XE66HELXRC5GG",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
         }
       }
     },
@@ -198,7 +210,7 @@
         "prefer": "return=representation",
         "body": {
           "sender_batch_header": {
-            "sender_batch_id": "approvd-1793206771794-ca934e40",
+            "sender_batch_id": "approvd-1793207291870-400acb01",
             "email_subject": "You have a payout",
             "email_message": "Sent by Approvd (sandbox demo)."
           },
@@ -207,7 +219,7 @@
               "recipient_type": "EMAIL",
               "receiver": "newvendor@mail.test",
               "note": "packaging",
-              "sender_item_id": "approvd-1793206771794-ca934e40-0",
+              "sender_item_id": "approvd-1793207291870-400acb01-0",
               "amount": {
                 "value": "60.00",
                 "currency": "USD"
@@ -217,13 +229,25 @@
         }
       },
       "response": {
-        "status": 403,
+        "status": 201,
         "body": {
-          "name": "PAYOUT_NOT_AVAILABLE",
-          "message": "You live in a country that is not allowed to send this payout.",
-          "debug_id": "ca51b7dd3bec0",
-          "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
-          "links": []
+          "batch_header": {
+            "payout_batch_id": "XSJQZC46VRUQ8",
+            "batch_status": "PENDING",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-1793207291870-400acb01",
+              "email_subject": "You have a payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            }
+          },
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/XSJQZC46VRUQ8",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
         }
       }
     },

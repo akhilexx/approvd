@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "recordedAt": "2026-10-28T17:08:12.503Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
@@ -10,7 +10,7 @@
         "prefer": "return=representation",
         "body": {
           "sender_batch_header": {
-            "sender_batch_id": "approvd-e2e-1793206768893",
+            "sender_batch_id": "approvd-e2e-1793207253063",
             "email_subject": "Approvd sandbox e2e payout",
             "email_message": "Sent by Approvd (sandbox demo)."
           },
@@ -19,7 +19,7 @@
               "recipient_type": "EMAIL",
               "receiver": "[REDACTED]",
               "note": "Approvd e2e courier payout",
-              "sender_item_id": "approvd-e2e-1793206768893-0",
+              "sender_item_id": "approvd-e2e-1793207253063-0",
               "amount": {
                 "value": "2.50",
                 "currency": "USD"
@@ -29,7 +29,7 @@
               "recipient_type": "EMAIL",
               "receiver": "unclaimed-courier@example.com",
               "note": "Approvd e2e unclaimed payout",
-              "sender_item_id": "approvd-e2e-1793206768893-1",
+              "sender_item_id": "approvd-e2e-1793207253063-1",
               "amount": {
                 "value": "1.25",
                 "currency": "USD"
@@ -39,13 +39,25 @@
         }
       },
       "response": {
-        "status": 403,
+        "status": 201,
         "body": {
-          "name": "PAYOUT_NOT_AVAILABLE",
-          "message": "You live in a country that is not allowed to send this payout.",
-          "debug_id": "ca51b7dc19848",
-          "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
-          "links": []
+          "batch_header": {
+            "payout_batch_id": "C9TGC6BQ5NMDC",
+            "batch_status": "PENDING",
+            "sender_batch_header": {
+              "sender_batch_id": "approvd-e2e-1793207253063",
+              "email_subject": "Approvd sandbox e2e payout",
+              "email_message": "Sent by Approvd (sandbox demo)."
+            }
+          },
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC",
+              "rel": "self",
+              "method": "GET",
+              "encType": "application/json"
+            }
+          ]
         }
       }
     }

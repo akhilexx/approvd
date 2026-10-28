@@ -1,0 +1,65 @@
+{
+  "recordedAt": "2026-10-28T17:08:12.503Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v2/payments/captures/7JL59317JX080273J/refund",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {
+          "amount": {
+            "value": "1.00",
+            "currency_code": "USD"
+          },
+          "note_to_payer": "Approvd sandbox e2e: partial refund"
+        }
+      },
+      "response": {
+        "status": 201,
+        "body": {
+          "id": "0VN52360XA333393A",
+          "amount": {
+            "currency_code": "USD",
+            "value": "1.00"
+          },
+          "note_to_payer": "Approvd sandbox e2e: partial refund",
+          "seller_payable_breakdown": {
+            "gross_amount": {
+              "currency_code": "USD",
+              "value": "1.00"
+            },
+            "paypal_fee": {
+              "currency_code": "USD",
+              "value": "0.00"
+            },
+            "net_amount": {
+              "currency_code": "USD",
+              "value": "1.00"
+            },
+            "total_refunded_amount": {
+              "currency_code": "USD",
+              "value": "1.00"
+            }
+          },
+          "status": "COMPLETED",
+          "create_time": "2026-10-28T10:07:24-07:00",
+          "update_time": "2026-10-28T10:07:24-07:00",
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v2/payments/refunds/0VN52360XA333393A",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://api.sandbox.paypal.com/v2/payments/captures/7JL59317JX080273J",
+              "rel": "up",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

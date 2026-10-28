@@ -1,36 +1,71 @@
 {
-  "ranAt": "2026-10-28T16:59:32.286Z",
+  "ranAt": "2026-10-28T17:08:12.504Z",
   "mode": "full",
   "results": [
     {
       "step": "oauth+create_order",
       "ok": true,
-      "detail": "59315862B85959205 PAYER_ACTION_REQUIRED approve: https://www.sandbox.paypal.com/checkoutnow?token=59315862B85959205"
+      "detail": "0YY67081E1669093B PAYER_ACTION_REQUIRED approve: https://www.sandbox.paypal.com/checkoutnow?token=0YY67081E1669093B"
     },
     {
       "step": "get_order",
       "ok": true,
-      "detail": "59315862B85959205 PAYER_ACTION_REQUIRED 45.00"
+      "detail": "0YY67081E1669093B PAYER_ACTION_REQUIRED 45.00"
     },
     {
       "step": "capture_unapproved_rejected",
       "ok": true,
-      "detail": "422 ORDER_NOT_APPROVED: Payer has not yet approved the Order for payment. Please redirect the payer to the 'rel':'approve' url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request."
+      "detail": "422 ORDER_NOT_APPROVED: Payer has not yet approved the Order for payment. Please redirect the payer to the 'rel':'approve' url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request. The requested action could not be performed, semantically incorrect, or failed business validation."
     },
     {
       "step": "buyer_approval_wallet",
       "ok": "blocked",
-      "detail": "needs a sandbox buyer to log in at the approve link in a browser, then run: npm run e2e:sandbox -- capture 59315862B85959205"
+      "detail": "needs a sandbox buyer to log in at the approve link in a browser, then run: npm run e2e:sandbox -- capture 0YY67081E1669093B"
     },
     {
       "step": "card_order_capture",
-      "ok": "blocked",
-      "detail": "422 PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING: enable Advanced Credit and Debit Card Payments on the sandbox app to test capture/refund headlessly"
+      "ok": true,
+      "detail": "02W52954P4007762J COMPLETED capture 7JL59317JX080273J"
+    },
+    {
+      "step": "refund_partial",
+      "ok": true,
+      "detail": "0VN52360XA333393A COMPLETED 1.00"
+    },
+    {
+      "step": "get_capture_after_partial",
+      "ok": true,
+      "detail": "capture status PARTIALLY_REFUNDED"
+    },
+    {
+      "step": "refund_full_remainder",
+      "ok": true,
+      "detail": "3G864908KK461224R COMPLETED 9.00"
+    },
+    {
+      "step": "get_capture_after_full",
+      "ok": true,
+      "detail": "capture status REFUNDED"
+    },
+    {
+      "step": "refund_over_limit_rejected",
+      "ok": true,
+      "detail": "422 CAPTURE_FULLY_REFUNDED: The capture has already been fully refunded The requested action could not be performed, semantically incorrect, or failed business validation."
     },
     {
       "step": "create_payout",
-      "ok": false,
-      "detail": "403 PAYOUT_NOT_AVAILABLE: You live in a country that is not allowed to send this payout. Hint: PayPal Payouts is not available for this business account's country. Use a US sandbox business account for the app (developer.paypal.com > Sandbox > Accounts)."
+      "ok": true,
+      "detail": "C9TGC6BQ5NMDC PENDING total 3.75"
+    },
+    {
+      "step": "payout_duplicate_sender_batch_rejected",
+      "ok": true,
+      "detail": "400 USER_BUSINESS_ERROR: Batch with given sender_batch_id already exists User business error."
+    },
+    {
+      "step": "get_payout",
+      "ok": true,
+      "detail": "SUCCESS; items: [REDACTED]=SUCCESS, unclaimed-courier@example.com=UNCLAIMED"
     },
     {
       "step": "list_disputes",
@@ -45,32 +80,32 @@
     {
       "step": "agent:create_order",
       "ok": true,
-      "detail": "✅ Checkout 8HV15214WM9593842 for 45.00 USD created. Buyer approval link: https://www.sandbox.paypal.com/checkoutnow?token=8HV15214WM9593842"
+      "detail": "✅ Checkout 2YE5604897444383S for 45.00 USD created. Buyer approval link: https://www.sandbox.paypal.com/checkoutnow?token=2YE5604897444383S"
     },
     {
       "step": "agent:get_order",
       "ok": true,
-      "detail": "ℹ️ Order 8HV15214WM9593842 is PAYER_ACTION_REQUIRED (45.00 USD)."
+      "detail": "ℹ️ Order 2YE5604897444383S is PAYER_ACTION_REQUIRED (45.00 USD)."
     },
     {
       "step": "agent:capture_unapproved_reports_error",
       "ok": true,
-      "detail": "⚠️ capture_order failed: PayPal 422 ORDER_NOT_APPROVED: Payer has not yet approved the Order for payment. Please redirect the payer to the 'rel':'approve' url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request. (debug_id ca51b7dc8ddad)"
+      "detail": "⚠️ capture_order failed: PayPal 422 ORDER_NOT_APPROVED: Payer has not yet approved the Order for payment. Please redirect the payer to the 'rel':'approve' url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request. The requested action could not be performed, semantically incorrect, or failed business validation. (debug_id ca51b8a807f02)"
     },
     {
       "step": "agent:payout_auto_allowed",
-      "ok": false,
-      "detail": "⚠️ create_payout failed: PayPal 403 PAYOUT_NOT_AVAILABLE: You live in a country that is not allowed to send this payout. Hint: PayPal Payouts is not available for this business account's country. Use a US sandbox business account for the app (developer.paypal.com > Sandbox > Accounts). (debug_id f72137922d4c1)"
+      "ok": true,
+      "detail": "✅ Payout batch XE66HELXRC5GG (2.00 USD) to 1 payee(s): PENDING."
     },
     {
       "step": "agent:payout_needs_approval",
       "ok": true,
-      "detail": "⏸ create_payout for 60 needs your approval (payee not on allowlist: newvendor@mail.test; 60 is above the 50 auto-approve threshold). Approval id apr_564d7947."
+      "detail": "⏸ create_payout for 60 needs your approval (payee not on allowlist: newvendor@mail.test; 60 is above the 50 auto-approve threshold). Approval id apr_416d0227."
     },
     {
       "step": "agent:approved_payout_executes",
-      "ok": false,
-      "detail": "failed PayPal 403 PAYOUT_NOT_AVAILABLE: You live in a country that is not allowed to send this payout. Hint: PayPal Payouts is not available for this business account's country. Use a US sandbox business account for the app (developer.paypal.com > Sandbox > Accounts). (debug_id ca51b7dd3bec0)"
+      "ok": true,
+      "detail": "approved XSJQZC46VRUQ8"
     },
     {
       "step": "agent:hard_limit_denied",

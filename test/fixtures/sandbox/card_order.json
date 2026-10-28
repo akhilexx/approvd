@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "recordedAt": "2026-10-28T17:08:12.503Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
@@ -31,21 +31,104 @@
         }
       },
       "response": {
-        "status": 422,
+        "status": 201,
         "body": {
-          "name": "UNPROCESSABLE_ENTITY",
-          "details": [
+          "id": "02W52954P4007762J",
+          "intent": "CAPTURE",
+          "status": "COMPLETED",
+          "payment_source": {
+            "card": {
+              "name": "Test Buyer",
+              "last_digits": "1111",
+              "expiry": "2030-12",
+              "brand": "VISA",
+              "type": "CREDIT",
+              "bin_details": {}
+            }
+          },
+          "purchase_units": [
             {
-              "issue": "PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING",
-              "description": "Payee account is not setup to be able to process card payments. Please contact PayPal customer support."
+              "reference_id": "card-test",
+              "amount": {
+                "currency_code": "USD",
+                "value": "10.00"
+              },
+              "payee": {
+                "email_address": "[REDACTED]",
+                "merchant_id": "REDACTED_ID"
+              },
+              "description": "Approvd sandbox card test",
+              "soft_descriptor": "TEST STORE",
+              "supplementary_data": {
+                "risk": {
+                  "risk_level_indicator": "HIGH_RISK"
+                }
+              },
+              "payments": {
+                "captures": [
+                  {
+                    "id": "7JL59317JX080273J",
+                    "status": "COMPLETED",
+                    "amount": {
+                      "currency_code": "USD",
+                      "value": "10.00"
+                    },
+                    "final_capture": true,
+                    "seller_protection": {
+                      "status": "NOT_ELIGIBLE"
+                    },
+                    "seller_receivable_breakdown": {
+                      "gross_amount": {
+                        "currency_code": "USD",
+                        "value": "10.00"
+                      },
+                      "paypal_fee": {
+                        "currency_code": "USD",
+                        "value": "0.75"
+                      },
+                      "net_amount": {
+                        "currency_code": "USD",
+                        "value": "9.25"
+                      }
+                    },
+                    "links": [
+                      {
+                        "href": "https://api.sandbox.paypal.com/v2/payments/captures/7JL59317JX080273J",
+                        "rel": "self",
+                        "method": "GET"
+                      },
+                      {
+                        "href": "https://api.sandbox.paypal.com/v2/payments/captures/7JL59317JX080273J/refund",
+                        "rel": "refund",
+                        "method": "POST"
+                      },
+                      {
+                        "href": "https://api.sandbox.paypal.com/v2/checkout/orders/02W52954P4007762J",
+                        "rel": "up",
+                        "method": "GET"
+                      }
+                    ],
+                    "create_time": "2026-10-28T17:07:22Z",
+                    "update_time": "2026-10-28T17:07:22Z",
+                    "network_transaction_reference": {
+                      "id": "763850595777739",
+                      "network": "VISA"
+                    },
+                    "processor_response": {
+                      "cvv_code": "M",
+                      "response_code": "0000"
+                    }
+                  }
+                ]
+              }
             }
           ],
-          "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
-          "debug_id": "f506623f8e0f0",
+          "create_time": "2026-10-28T17:07:22Z",
+          "update_time": "2026-10-28T17:07:22Z",
           "links": [
             {
-              "href": "https://developer.paypal.com/api/rest/reference/orders/v2/errors/#PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING",
-              "rel": "information_link",
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/02W52954P4007762J",
+              "rel": "self",
               "method": "GET"
             }
           ]

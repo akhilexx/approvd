@@ -1,17 +1,17 @@
 {
-  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "recordedAt": "2026-10-28T17:08:12.502Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
       "request": {
         "method": "GET",
-        "path": "/v2/checkout/orders/59315862B85959205",
+        "path": "/v2/checkout/orders/0YY67081E1669093B",
         "prefer": "return=representation"
       },
       "response": {
         "status": 200,
         "body": {
-          "id": "59315862B85959205",
+          "id": "0YY67081E1669093B",
           "intent": "CAPTURE",
           "status": "PAYER_ACTION_REQUIRED",
           "payment_source": {
@@ -35,15 +35,15 @@
               "description": "2 soy candles (Approvd sandbox e2e)"
             }
           ],
-          "create_time": "2026-10-28T16:59:25Z",
+          "create_time": "2026-10-28T17:07:15Z",
           "links": [
             {
-              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/59315862B85959205",
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/0YY67081E1669093B",
               "rel": "self",
               "method": "GET"
             },
             {
-              "href": "https://www.sandbox.paypal.com/checkoutnow?token=59315862B85959205",
+              "href": "https://www.sandbox.paypal.com/checkoutnow?token=0YY67081E1669093B",
               "rel": "payer-action",
               "method": "GET"
             }

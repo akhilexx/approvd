@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-10-28T17:08:12.503Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v1/payments/payouts",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {
+          "sender_batch_header": {
+            "sender_batch_id": "approvd-e2e-1793207253063",
+            "email_subject": "dup",
+            "email_message": "Sent by Approvd (sandbox demo)."
+          },
+          "items": [
+            {
+              "recipient_type": "EMAIL",
+              "receiver": "[REDACTED]",
+              "note": "Approvd e2e courier payout",
+              "sender_item_id": "approvd-e2e-1793207253063-0",
+              "amount": {
+                "value": "2.50",
+                "currency": "USD"
+              }
+            },
+            {
+              "recipient_type": "EMAIL",
+              "receiver": "unclaimed-courier@example.com",
+              "note": "Approvd e2e unclaimed payout",
+              "sender_item_id": "approvd-e2e-1793207253063-1",
+              "amount": {
+                "value": "1.25",
+                "currency": "USD"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 400,
+        "body": {
+          "name": "USER_BUSINESS_ERROR",
+          "message": "User business error.",
+          "debug_id": "f939829862efd",
+          "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
+          "details": [
+            {
+              "field": "SENDER_BATCH_ID",
+              "location": "body",
+              "issue": "Batch with given sender_batch_id already exists",
+              "link": [
+                {
+                  "href": "https://api.sandbox.paypal.com/v1/payments/payouts/C9TGC6BQ5NMDC",
+                  "rel": "self",
+                  "method": "GET",
+                  "encType": "application/json"
+                }
+              ]
+            }
+          ],
+          "links": []
+        }
+      }
+    }
+  ]
+}

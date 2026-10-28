@@ -1,11 +1,11 @@
 {
-  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "recordedAt": "2026-10-28T17:08:12.503Z",
   "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
   "calls": [
     {
       "request": {
         "method": "POST",
-        "path": "/v2/checkout/orders/59315862B85959205/capture",
+        "path": "/v2/checkout/orders/0YY67081E1669093B/capture",
         "paypalRequestId": "<set>",
         "prefer": "return=representation",
         "body": {}
@@ -21,7 +21,7 @@
             }
           ],
           "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
-          "debug_id": "ca51b7daf7fab",
+          "debug_id": "f689272e3add5",
           "links": [
             {
               "href": "https://developer.paypal.com/api/rest/reference/orders/v2/errors/#ORDER_NOT_APPROVED",

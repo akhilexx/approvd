@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-28T17:08:12.503Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v2/payments/captures/7JL59317JX080273J/refund",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {
+          "amount": {
+            "value": "0.50",
+            "currency_code": "USD"
+          }
+        }
+      },
+      "response": {
+        "status": 422,
+        "body": {
+          "name": "UNPROCESSABLE_ENTITY",
+          "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
+          "debug_id": "f7216805321d1",
+          "details": [
+            {
+              "issue": "CAPTURE_FULLY_REFUNDED",
+              "description": "The capture has already been fully refunded"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://developer.paypal.com/docs/api/payments/v2/#error-CAPTURE_FULLY_REFUNDED",
+              "rel": "information_link"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

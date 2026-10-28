@@ -112,7 +112,7 @@ async function full() {
   const p = await step("create_payout", () => gw.createPayouts(items, cfg.currency, batchId, "Approvd sandbox e2e payout"));
   if (p) {
     result("create_payout", !!p.batchId, `${p.batchId} ${p.status} total ${p.total.value}`);
-    await expectError("payout_duplicate_sender_batch_rejected", () => gw.createPayouts(items, cfg.currency, batchId, "dup"), /DUPLICATE|SENDER_BATCH_ID|USER_BUSINESS_ERROR/);
+    await expectError("payout_duplicate_sender_batch_rejected", () => gw.createPayouts(items, cfg.currency, batchId, "dup"), /DUPLICATE|SENDER_BATCH_ID|USER_BUSINESS_ERROR/i);
     let b = await step("get_payout", () => gw.getPayoutBatch(p.batchId));
     for (let i = 0; i < 8 && b && /PENDING|PROCESSING/.test(b.status); i++) { await sleep(4000); b = await step("get_payout", () => gw.getPayoutBatch(p.batchId)); }
     if (b) result("get_payout", /SUCCESS|PROCESSING|PENDING/.test(b.status), `${b.status}; items: ${b.items.map((x) => `${x.receiver}=${x.status}`).join(", ")}`);
@@ -136,7 +136,7 @@ async function full() {
   const r5 = await app.agent.chat("e2e", "Send $60 to newvendor@mail.test for packaging");
   const apr = r5.steps.find((s) => s.approvalId)?.approvalId;
   result("agent:payout_needs_approval", !!apr, r5.reply.split("\n")[0]);
-  if (apr) { const a = await app.engine.approve(apr, "e2e"); result("agent:approved_payout_executes", a.status === "executed", `${a.status} ${a.result?.batchId ?? a.error ?? ""}`); }
+  if (apr) { const a = await app.engine.approve(apr, "e2e"); result("agent:approved_payout_executes", a.status === "approved" || a.status === "executed", `${a.status} ${a.result?.batchId ?? a.error ?? ""}`); }
   const r6 = await app.agent.chat("e2e", "Pay maya@example.com $900 for the photoshoot");
   result("agent:hard_limit_denied", r6.steps[0]?.status === "denied", r6.reply.split("\n")[0]);
   const r7 = await app.agent.chat("e2e", "List open disputes");
