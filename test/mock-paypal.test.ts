@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import { MockPayPal } from "../src/paypal/mock.ts";
 
 const base = { currency: "USD", description: "candles", returnUrl: "r", cancelUrl: "c" };
-test("order state machine mirrors PayPal: CREATED -> APPROVED -> COMPLETED", async () => {
+test("order state machine mirrors PayPal: PAYER_ACTION_REQUIRED -> APPROVED -> COMPLETED (as seen live in sandbox)", async () => {
   const pp = new MockPayPal("http://h");
   const o = await pp.createOrder({ ...base, amount: 45 });
-  assert.equal(o.status, "CREATED"); assert.equal(o.approveUrl, `http://h/mock/checkout/${o.id}`);
+  assert.equal(o.status, "PAYER_ACTION_REQUIRED"); assert.equal(o.approveUrl, `http://h/mock/checkout/${o.id}`);
   await assert.rejects(pp.captureOrder(o.id), /not yet approved/);
   pp.approve(o.id);
   const c = await pp.captureOrder(o.id);

@@ -6,7 +6,7 @@ export interface Money { currency: string; value: string }
 
 export interface OrderSummary {
   id: string;
-  status: string; // CREATED | APPROVED | COMPLETED | VOIDED ...
+  status: string; // PAYER_ACTION_REQUIRED | CREATED | APPROVED | COMPLETED | VOIDED ...
   amount: Money;
   description: string;
   approveUrl?: string;

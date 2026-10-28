@@ -9,6 +9,14 @@ import {
 } from "./types.ts";
 
 type Fetch = typeof fetch;
+// Account-setup errors seen live on the sandbox, with what to change. Appended to the PayPal message so the agent
+// and the console tell the merchant how to fix it instead of only echoing the code.
+export const SETUP_HINTS: Record<string, string> = {
+  PAYOUT_NOT_AVAILABLE: "Hint: PayPal Payouts is not available for this business account's country. Use a US sandbox business account for the app (developer.paypal.com > Sandbox > Accounts).",
+  PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING: "Hint: enable Advanced Credit and Debit Card Payments for the sandbox app, or use a US sandbox business account.",
+  AUTHORIZATION_ERROR: "Hint: this sandbox app is missing the permission for this API. Enable the feature under Apps & Credentials > your app > Features.",
+  NOT_AUTHORIZED: "Hint: this sandbox app is missing the permission for this API. Enable the feature under Apps & Credentials > your app > Features.",
+};
 const m = (a: any): Money => ({ currency: a?.currency_code ?? a?.currency ?? "USD", value: String(a?.value ?? "0") });
 
 export class SandboxPayPal implements PayPalGateway {
@@ -43,7 +51,8 @@ export class SandboxPayPal implements PayPalGateway {
     const json: any = text ? JSON.parse(text) : {};
     if (!res.ok) {
       const issue = json.details?.[0]?.issue ?? json.name ?? "PAYPAL_ERROR";
-      throw new PayPalError(res.status, issue, json.details?.[0]?.description ?? json.message ?? `PayPal ${res.status}`, json.debug_id);
+      const msg = json.details?.[0]?.description ?? json.message ?? `PayPal ${res.status}`;
+      throw new PayPalError(res.status, issue, SETUP_HINTS[issue] ? `${msg} ${SETUP_HINTS[issue]}` : msg, json.debug_id);
     }
     return json;
   }
@@ -60,6 +69,20 @@ export class SandboxPayPal implements PayPalGateway {
       intent: "CAPTURE",
       purchase_units: [{ reference_id: i.referenceId ?? "default", description: i.description.slice(0, 127), amount: { currency_code: i.currency, value: i.amount.toFixed(2) } }],
       payment_source: { paypal: { experience_context: { return_url: i.returnUrl, cancel_url: i.cancelUrl, user_action: "PAY_NOW", shipping_preference: "NO_SHIPPING", brand_name: "Approvd demo store" } } },
+    });
+    return this.order(j);
+  }
+  /**
+   * Sandbox-only test helper (not part of PayPalGateway, never exposed to the agent): pay an order directly with
+   * one of PayPal's documented sandbox test cards, so capture and refund can be exercised with no buyer login.
+   * Requires "Advanced Credit and Debit Card Payments" to be enabled for the sandbox app; otherwise PayPal answers
+   * 422 PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING.
+   */
+  async createCardTestOrder(amount: number, currency: string, card: { number: string; expiry: string; securityCode: string; name: string }, description = "Approvd sandbox card test"): Promise<OrderSummary> {
+    const j = await this.call("POST", "/v2/checkout/orders", {
+      intent: "CAPTURE",
+      purchase_units: [{ reference_id: "card-test", description, amount: { currency_code: currency, value: amount.toFixed(2) } }],
+      payment_source: { card: { number: card.number, expiry: card.expiry, security_code: card.securityCode, name: card.name } },
     });
     return this.order(j);
   }

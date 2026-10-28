@@ -1,6 +1,6 @@
 // Offline PayPal simulator. Mirrors the sandbox state machine closely enough that the agent,
 // policy engine and UI behave the same way they do against api-m.sandbox.paypal.com:
-//  - orders start CREATED and cannot be captured until a buyer approves them (ORDER_NOT_APPROVED)
+//  - orders start PAYER_ACTION_REQUIRED (as the live sandbox returns when payment_source.paypal is used) and cannot be captured until a buyer approves them (ORDER_NOT_APPROVED)
 //  - captures can be refunded partially, never beyond the captured amount (REFUND_AMOUNT_EXCEEDED)
 //  - payouts to receivers on @unclaimed.example come back UNCLAIMED, like a payee with no account
 import { randomBytes } from "node:crypto";
@@ -35,7 +35,7 @@ export class MockPayPal implements PayPalGateway {
     if (!(input.amount > 0)) throw new PayPalError(422, "INVALID_PARAMETER_VALUE", "amount must be positive");
     const orderId = id("", 17);
     const order: MockOrder = {
-      id: orderId, status: "CREATED", amount: toMoney(input.amount, input.currency), description: input.description,
+      id: orderId, status: "PAYER_ACTION_REQUIRED", amount: toMoney(input.amount, input.currency), description: input.description,
       approveUrl: `${this.publicBaseUrl}/mock/checkout/${orderId}`, returnUrl: input.returnUrl, cancelUrl: input.cancelUrl,
     };
     this.orders.set(orderId, order);
@@ -45,7 +45,7 @@ export class MockPayPal implements PayPalGateway {
   /** Simulates the buyer clicking "Pay" on the PayPal approval page. */
   approve(orderId: string, payerEmail = "sb-buyer@personal.example.com"): MockOrder {
     const o = this.mustOrder(orderId);
-    if (o.status === "CREATED") { o.status = "APPROVED"; o.payerEmail = payerEmail; }
+    if (o.status === "PAYER_ACTION_REQUIRED") { o.status = "APPROVED"; o.payerEmail = payerEmail; }
     return o;
   }
 
