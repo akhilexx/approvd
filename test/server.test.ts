@@ -22,6 +22,24 @@ test("console, static assets and health", async (t) => {
   assert.equal((await j("/../package.json")).status, 404);
 });
 
+test("bundled fonts are served locally as woff2 (byte-exact) and the CSP allows only self", async (t) => {
+  const { srv, base, j } = await boot(); t.after(() => srv.close());
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["fraunces-latin-var.woff2", "manrope-latin-var.woff2"]) {
+    const r = await fetch(`${base}/fonts/${f}`);
+    assert.equal(r.status, 200); assert.equal(r.headers.get("content-type"), "font/woff2");
+    const buf = Buffer.from(await r.arrayBuffer());
+    assert.equal(buf.subarray(0, 4).toString("latin1"), "wOF2");
+    assert.ok(buf.equals(readFileSync(new URL(`../web/fonts/${f}`, import.meta.url))));
+    assert.match(r.headers.get("content-security-policy")!, /font-src 'self'/);
+  }
+  assert.equal((await j("/fonts/OFL-Fraunces.txt")).status, 404);
+  assert.equal((await j("/fonts/../package.json")).status, 404);
+  const css = (await j("/style.css")).body as string;
+  assert.doesNotMatch(css, /https?:\/\//, "no external font or asset URLs");
+  assert.match(css, /url\("\/fonts\/fraunces-latin-var\.woff2"\)/);
+});
+
 test("chat -> simulated buyer approval page -> capture -> approvals API", async (t) => {
   const { srv, j } = await boot(); t.after(() => srv.close());
   const a = await j("/api/chat", { sessionId: "x", message: "Create a $45 checkout for 2 soy candles" });

@@ -1,0 +1,15 @@
+Approvd
+Copyright (c) 2026 Akhilesh Patil. Licensed under the MIT License (see LICENSE).
+
+This product bundles the following third-party fonts. They were modified only
+by fixing variation axes (instancing) and subsetting to latin (see web/fonts/README.md):
+
+- Fraunces: Copyright 2018 The Fraunces Project Authors
+  (https://github.com/undercasetype/Fraunces).
+  Licensed under the SIL Open Font License, Version 1.1: web/fonts/OFL-Fraunces.txt
+
+- Manrope: Copyright 2018 The Manrope Project Authors
+  (https://github.com/googlefonts/manrope).
+  Licensed under the SIL Open Font License, Version 1.1: web/fonts/OFL-Manrope.txt
+
+The fonts are served from the app's own /fonts path; no external font service is used.

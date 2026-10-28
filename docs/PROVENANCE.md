@@ -46,6 +46,7 @@
 | 136a1f9 | 2026-10-28 22:56 | test: record live sandbox capture, partial and full refund, over-refund fixtures |
 | b9f133a | 2026-10-28 23:09 | docs: final Devpost status; optional UI_PLANNER_LABEL badge text; provenance table refresh |
 | c3182aa | 2026-10-28 23:30 | Disputes v1 read tested live (redacted list/show/triage fixtures and replay tests, read-only e2e mode); agent completes chained requests |
-| (this commit) | 2026-10-28 | policy: deny refunds on a capture with an open PayPal dispute |
+| 0f39ad8 | 2026-10-28 23:33 | policy: deny refunds on a capture with an open PayPal dispute (refunding would settle it); read-only dispute lookup before each refund; mock + live-fixture tests |
+| (this commit) | 2026-10-29 | style(console): light glass theme with locally bundled OFL fonts (Fraunces, Manrope); neutral AI badge (live LLM / offline planner); verdict badges; themed return and error pages |
 
 Run `git log --format='%h %ad %s' --date=iso` for the current list.

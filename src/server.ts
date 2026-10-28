@@ -6,17 +6,18 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createApp, type App } from "./app.ts";
 import { MockPayPal } from "./paypal/mock.ts";
+import { MockPlanner } from "./agent/mockPlanner.ts";
 import { describePolicy } from "./policy.ts";
 import { TOOL_SPECS } from "./tools.ts";
 import { DailyCounter } from "./guard.ts";
 import { timingSafeEqual, createHash } from "node:crypto";
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), "..", "web");
-const TYPES: Record<string, string> = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml" };
+const TYPES: Record<string, string> = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".svg": "image/svg+xml", ".woff2": "font/woff2" };
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 export const SECURITY_HEADERS: Record<string, string> = {
-  "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'",
+  "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "no-referrer",
@@ -27,7 +28,7 @@ export const SECURITY_HEADERS: Record<string, string> = {
 };
 function sendRaw(res: ServerResponse, code: number, body: unknown, type = "application/json", extra: Record<string, string> = {}) {
   res.writeHead(code, { ...SECURITY_HEADERS, ...extra, "Content-Type": type, "Cache-Control": "no-store" });
-  res.end(typeof body === "string" ? body : JSON.stringify(body));
+  res.end(typeof body === "string" || Buffer.isBuffer(body) ? body : JSON.stringify(body));
 }
 class HttpError extends Error { code: number; constructor(code: number, msg: string) { super(msg); this.code = code; } }
 async function readJson(req: IncomingMessage, maxBytes: number): Promise<any> {
@@ -47,7 +48,7 @@ function logLine(method: string, path: string, code: number, ms: number, ip: str
   if (process.env.NODE_ENV === "test" || process.env.LOG_REQUESTS === "0") return;
   console.log(JSON.stringify({ t: new Date().toISOString(), method, path: path.replace(/(apr_|ord_)[\w-]+/g, "$1…"), code, ms, ip: createHash("sha256").update(ip).digest("hex").slice(0, 10) }));
 }
-const page = (title: string, inner: string) => `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>${esc(title)}</title><link rel=stylesheet href=/style.css><main class="narrow card">${inner}</main>`;
+const page = (title: string, inner: string, tone: "ok" | "warn" | "err" | "" = "") => `<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>${esc(title)} · Approvd</title><link rel=icon href=/favicon.svg type="image/svg+xml"><link rel=stylesheet href=/style.css><main class="narrow card ${tone}"><div class=mini><b class=logo>Approvd</b><span class="pill">${esc(title)}</span></div>${inner}</main></html>`;
 
 // Tiny fixed-window rate limit for the hosted demo so a public URL can't burn the LLM key.
 export function rateLimiter(limit = Number(process.env.RATE_LIMIT_PER_MIN ?? 30)) {
@@ -66,8 +67,14 @@ export function makeHandler(app: App) {
   const daily = new DailyCounter(lim.dailyRequestCap);
   const corsOrigin = lim.corsOrigin;
   let { engine, agent } = app;
-  const state = () => ({
-    paypalMode: app.gw.mode, planner: app.cfg.uiPlannerLabel || agent.planner.name, currency: app.cfg.currency,
+  // Console badge: neutral wording, never a vendor or model name. "offline planner" whenever the
+  // deterministic planner is (or will be) answering; otherwise UI_PLANNER_LABEL or "live LLM".
+  // /api/state still reports the real planner name in `planner` for transparency.
+  const offlineName = new MockPlanner().name;
+  const aiBadge = (offline: boolean) => (offline ? "offline planner" : app.cfg.uiPlannerLabel || "live LLM");
+  const plannerOffline = () => agent.planner instanceof MockPlanner || !!app.guard.blockedReason();
+  const state = (offline = plannerOffline()) => ({
+    paypalMode: app.gw.mode, planner: agent.planner.name, aiBadge: aiBadge(offline), currency: app.cfg.currency,
     limits: { maxInputChars: lim.maxInputChars, sessionTurnCap: lim.sessionTurnCap, rateLimitPerMin: lim.rateLimitPerMin, llm: app.guard.status() },
     policy: { ...app.cfg.policy, text: describePolicy(app.cfg.policy) },
     outflowLast24h: engine.outflowLast24h(), refs: engine.refs,
@@ -93,9 +100,10 @@ export function makeHandler(app: App) {
     try {
       if (req.method === "OPTIONS") return corsOrigin && origin === corsOrigin ? reply(204, "", "text/plain") : reply(403, { error: "CORS origin not allowed" });
       if (req.method === "POST" && !sameOrigin && origin !== corsOrigin) return reply(403, { error: "Cross-origin request refused." });
-      if ((req.method === "GET" || req.method === "HEAD") && (p === "/" || /^\/[\w-]+\.(js|css|svg)$/.test(p))) {
+      if ((req.method === "GET" || req.method === "HEAD") && (p === "/" || /^\/[\w-]+\.(js|css|svg)$/.test(p) || /^\/fonts\/[\w-]+\.woff2$/.test(p))) {
         const file = p === "/" ? "index.html" : p.slice(1);
-        return send(res, 200, readFileSync(join(WEB, file), "utf8"), TYPES[file.slice(file.lastIndexOf("."))]);
+        // Fonts are bundled locally (SIL OFL, see web/fonts/README.md); no external CDN.
+        return send(res, 200, file.endsWith(".woff2") ? readFileSync(join(WEB, file)) : readFileSync(join(WEB, file), "utf8"), TYPES[file.slice(file.lastIndexOf("."))]);
       }
       if (p === "/healthz") return send(res, 200, { ok: true, paypalMode: app.gw.mode });
 
@@ -103,12 +111,12 @@ export function makeHandler(app: App) {
       const mc = p.match(/^\/mock\/checkout\/([A-Z0-9]+)(\/approve)?$/);
       if (mc && app.gw instanceof MockPayPal) {
         const order = app.gw.orders.get(mc[1]);
-        if (!order) return send(res, 404, page("Not found", "<h2>Order not found</h2>"), TYPES[".html"]);
+        if (!order) return send(res, 404, page("Not found", `<h2>Order not found</h2><p class=muted>This simulated checkout link is unknown or was cleared by Reset demo.</p><p><a href="/">Back to console</a></p>`, "err"), TYPES[".html"]);
         if (mc[2] && req.method === "POST") { app.gw.approve(order.id); res.writeHead(303, { Location: `/return?token=${order.id}` }); return res.end(); }
-        return send(res, 200, page("Simulated checkout", `<p class=tag>SIMULATED BUYER APPROVAL · mock mode, no real money</p><h2>Pay ${esc(order.amount.value)} ${esc(order.amount.currency)}</h2><p>${esc(order.description)}</p><p class=muted>Order ${esc(order.id)} · status ${esc(order.status)}</p><form method=post action="/mock/checkout/${order.id}/approve"><button class=primary>Approve payment as sandbox buyer</button></form><p><a href="/cancel?token=${order.id}">Cancel</a></p>`), TYPES[".html"]);
+        return send(res, 200, page("Simulated checkout", `<p class=tag>SIMULATED BUYER APPROVAL · mock mode, no real money</p><h2>Pay ${esc(order.amount.value)} ${esc(order.amount.currency)}</h2><p>${esc(order.description)}</p><p class=muted>Order ${esc(order.id)} · status ${esc(order.status)}</p><form method=post action="/mock/checkout/${order.id}/approve"><button class=primary>Approve payment as sandbox buyer</button></form><p><a href="/cancel?token=${order.id}">Cancel</a></p>`, "warn"), TYPES[".html"]);
       }
-      if (p === "/return") return send(res, 200, page("Approved", `<h2>Payment approved ✅</h2><p>Order <code>${esc(url.searchParams.get("token") ?? "")}</code> is approved by the buyer.</p><p>Go back to the Approvd console and say <b>“capture it”</b>.</p><p><a href="/">Open console</a></p>`), TYPES[".html"]);
-      if (p === "/cancel") return send(res, 200, page("Cancelled", `<h2>Checkout cancelled</h2><p><a href="/">Back to console</a></p>`), TYPES[".html"]);
+      if (p === "/return") return send(res, 200, page("Approved", `<h2>Payment approved ✅</h2><p>Order <code>${esc(url.searchParams.get("token") ?? "")}</code> is approved by the buyer.</p><p class=next>Go back to the Approvd console and say <b>“capture it”</b>.</p><p><a href="/">Open console</a></p>`, "ok"), TYPES[".html"]);
+      if (p === "/cancel") return send(res, 200, page("Cancelled", `<h2>Checkout cancelled</h2><p class=muted>The buyer left checkout; nothing was charged.</p><p><a href="/">Back to console</a></p>`, "warn"), TYPES[".html"]);
 
       if (p.startsWith("/api/")) {
         if (!passcodeOk(req.headers["x-demo-passcode"], app.cfg.demoPasscode)) return reply(401, { error: "passcode required" });
@@ -121,7 +129,7 @@ export function makeHandler(app: App) {
           if (typeof b.message !== "string" || !b.message.trim()) return reply(400, { error: "message required" });
           if (b.message.length > lim.maxInputChars) return reply(413, { error: `Message too long (max ${lim.maxInputChars} characters).` });
           const out = await agent.chat(String(b.sessionId ?? "default").slice(0, 64), b.message);
-          return reply(200, { ...out, state: state() });
+          return reply(200, { ...out, state: state(out.planner === offlineName || plannerOffline()) });
         }
         if (req.method === "POST" && p === "/api/tools/call") {
           const b = await readJson(req, lim.maxBodyBytes);

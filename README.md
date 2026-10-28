@@ -71,8 +71,12 @@ git clone https://github.com/akhilexx/approvd.git && cd approvd
 npm run dev          # mock PayPal + offline planner on http://localhost:8787
 # or, in the terminal only:
 npm run demo         # scripted end-to-end story
-npm test             # 87 tests, no network or keys needed
+npm test             # 88 tests, no network or keys needed
 ```
+
+### The console
+
+A light "liquid glass" design: soft pink and gold glass cards, Fraunces headings and Manrope body text (both bundled locally under `web/fonts`, SIL OFL 1.1, no CDN or tracking). Policy verdicts show as colour-coded badges (`allow`, `needs_approval`, `deny`) in the chat steps, the Approvals queue and the ledger; all text and badges meet WCAG AA contrast. The header shows `PayPal: mock` or `PayPal: sandbox` and a neutral AI badge: **`AI: live LLM`** when the LLM planner is answering, or **`AI: offline planner`** in mock mode, when a hosted cap or the circuit breaker is active, or when a provider error made the offline planner answer that message. `UI_PLANNER_LABEL` can override the live text. The console never shows a vendor or model name; `GET /api/state` still reports the configured planner in `planner` for transparency.
 
 ### Judge walkthrough: do X, see Y
 
@@ -191,7 +195,7 @@ The public demo runs on a capped Azure key, so the server enforces these limits.
 | Optional passcode (constant-time compare) | `DEMO_PASSCODE` |
 | Locked-down CORS: same-origin only; foreign-origin POSTs get 403 | `CORS_ORIGIN` (blank) |
 
-All responses carry these security headers: CSP (`default-src 'self'`, `frame-ancestors 'none'`), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, `Permissions-Policy`, COOP/CORP, HSTS and `Cache-Control: no-store`. Request logs are one JSON line each, with method, path, status, duration and a hashed IP. They never include message text, prompts, passcodes or keys, and 500s return a generic error. `/api/reset` cannot reset the spend counters.
+All responses carry these security headers: CSP (`default-src 'self'`, `font-src 'self'`, `frame-ancestors 'none'`), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, `Permissions-Policy`, COOP/CORP, HSTS and `Cache-Control: no-store`. Request logs are one JSON line each, with method, path, status, duration and a hashed IP. They never include message text, prompts, passcodes or keys, and 500s return a generic error. `/api/reset` cannot reset the spend counters.
 
 ### Use Approvd's guarded tools from an MCP client
 
@@ -221,7 +225,7 @@ All settings are in [`.env.example`](.env.example). They cover the PayPal mode a
    - `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_DEPLOYMENT` (`gpt-6.1-sol`)
    - optionally `DEMO_PASSCODE`
 3. The blueprint already sets `PAYPAL_MODE=sandbox`, `LLM_MODE=azure`, `AZURE_OPENAI_WIRE=responses`, `CLIENT_IP_HEADER=true-client-ip`, the policy values and every cap in the table above. Tune them in the dashboard without a redeploy of code.
-4. After the first deploy, check `/healthz` and send one chat message. The badge should read "AI: gpt-6.1-sol (Azure OpenAI)".
+4. After the first deploy, check `/healthz` and send one chat message. The header badge should read "AI: live LLM" (`/api/state` reports the deployment name in `planner`).
 5. Free instances sleep when idle, and in-memory state (ledger, approvals, counters) resets on restart.
 
 ## Project layout
@@ -236,7 +240,7 @@ src/guard.ts     LLM spend caps + circuit breaker, daily request counter
 src/server.ts    web console + JSON API + simulated buyer page
 src/mcp.ts       MCP stdio bridge
 src/cli.ts       demo / smoke / chat commands
-web/             console UI (plain HTML/CSS/JS)
+web/             console UI (plain HTML/CSS/JS); web/fonts = bundled Fraunces + Manrope (SIL OFL 1.1)
 test/            node:test suites (no network); fixtures/sandbox and fixtures/llm = redacted live recordings
 scripts/         sandbox-e2e.ts (live PayPal sandbox e2e), llm-e2e.ts (live Azure model x PayPal sandbox), redact.ts
 docs/            provenance, screenshots
@@ -256,3 +260,5 @@ docs/            provenance, screenshots
 Built by **Akhilesh Patil** ([@akhilexx](https://github.com/akhilexx)), individual entrant. Development was assisted by an AI coding assistant; see [docs/PROVENANCE.md](docs/PROVENANCE.md).
 
 [MIT](LICENSE) © 2026 Akhilesh Patil
+
+Fonts: [Fraunces](https://github.com/undercasetype/Fraunces) (© The Fraunces Project Authors) and [Manrope](https://github.com/googlefonts/manrope) (© The Manrope Project Authors), both under the SIL Open Font License 1.1, latin subsets bundled in `web/fonts` with their licence files. See [NOTICE](NOTICE).

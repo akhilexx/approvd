@@ -106,8 +106,32 @@ test("rate limit keys on the trusted edge header only; spoofed X-Forwarded-For i
   assert.equal((await b.req("/api/chat", { body: { message: "hi" }, headers: { "True-Client-IP": "203.0.113.2" } })).status, 200);
 });
 
-test("UI_PLANNER_LABEL overrides only the console badge text", async (t) => {
-  const { srv, req, app } = await boot({ UI_PLANNER_LABEL: "gpt-6.1-sol" }); t.after(() => srv.close());
-  assert.equal((await req("/api/state")).body.planner, "gpt-6.1-sol");
-  assert.notEqual(app.agent.planner.name, "gpt-6.1-sol");
+test("console AI badge is neutral: offline planner, live LLM, or UI_PLANNER_LABEL; never a model name", async (t) => {
+  // Mock planner: honest "offline planner" even if a label is set; /api/state still reports the real planner name.
+  const m = await boot({ UI_PLANNER_LABEL: "live LLM demo" }); t.after(() => m.srv.close());
+  const ms = (await m.req("/api/state")).body;
+  assert.equal(ms.aiBadge, "offline planner");
+  assert.equal(ms.planner, m.app.agent.planner.name);
+  // Live (LLM) planner: default "live LLM", the vendor/model name never reaches the badge.
+  const fake = { name: "gpt-6.1-sol (Azure OpenAI)", next: async () => ({ text: "Hello from the model.", toolCalls: [] }) };
+  const live = await boot(); t.after(() => live.srv.close());
+  (live.app.agent as any).planner = fake;
+  const ls = (await live.req("/api/state")).body;
+  assert.equal(ls.aiBadge, "live LLM");
+  assert.equal(ls.planner, "gpt-6.1-sol (Azure OpenAI)");
+  assert.equal((await live.req("/api/chat", { body: { message: "hi" } })).body.state.aiBadge, "live LLM");
+  // UI_PLANNER_LABEL overrides the live badge text only.
+  const lab = await boot({ UI_PLANNER_LABEL: "live LLM (sandbox demo)" }); t.after(() => lab.srv.close());
+  (lab.app.agent as any).planner = fake;
+  assert.equal((await lab.req("/api/state")).body.aiBadge, "live LLM (sandbox demo)");
+  // Provider failure -> the offline planner answers, and the badge in that reply says so.
+  const down = await boot(); t.after(() => down.srv.close());
+  (down.app.agent as any).planner = { name: "gpt-6.1-sol (Azure OpenAI)", next: async () => { throw Object.assign(new Error("upstream 503"), { status: 503 }); } };
+  const r = (await down.req("/api/chat", { body: { message: "list open disputes" } })).body;
+  assert.match(r.reply, /offline planner/);
+  assert.equal(r.state.aiBadge, "offline planner");
+  // The console script renders aiBadge and the ledger tool name only (no planner/source line).
+  const js = (await m.req("/app.js")).body as string;
+  assert.match(js, /AI: \$\{esc\(ai\)\}/);
+  assert.doesNotMatch(js, /l\.source|st\.planner/);
 });

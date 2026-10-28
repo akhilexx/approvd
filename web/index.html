@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Approvd: guardrailed PayPal ops agent</title>
+<link rel="preload" href="/fonts/manrope-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/fraunces-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 <header>
-  <div><b class="logo">Approvd</b> <span class="muted">AI ops agent for PayPal merchants, with guardrails</span></div>
+  <div class="brand"><b class="logo">Approvd</b> <span class="tagline">AI ops agent for PayPal merchants, with guardrails</span></div>
   <div id="badges"></div>
 </header>
 <main class="grid">
@@ -15,15 +18,15 @@
     <h3>Ask the agent</h3>
     <div id="log" aria-live="polite"></div>
     <div id="chips"></div>
-    <form id="f"><input id="msg" autocomplete="off" placeholder="e.g. Create a $45 checkout for 2 soy candles for priya@example.com"><button class="primary">Send</button></form>
+    <form id="f"><input id="msg" autocomplete="off" aria-label="Message to the agent" placeholder="e.g. Create a $45 checkout for 2 soy candles for priya@example.com"><button class="primary">Send</button></form>
   </section>
   <section class="side">
-    <div class="card"><h3>Approvals <span id="apc" class="pill">0</span></h3><div id="approvals" class="muted">Nothing waiting.</div></div>
-    <div class="card"><h3>Policy</h3><p id="policy" class="muted"></p><div class="meter"><div id="bar"></div></div><p id="outflow" class="muted small"></p>
-      <button id="reset" class="ghost small">Reset demo</button> <button id="approveLast" class="ghost small" hidden>Simulate buyer approval of last checkout</button></div>
+    <div class="card gold"><h3>Approvals <span id="apc" class="pill">0</span></h3><div id="approvals" class="empty">Nothing waiting.</div></div>
+    <div class="card"><h3>Policy</h3><p id="policy"></p><div class="meter"><div id="bar"></div></div><p id="outflow" class="muted small"></p>
+      <div class="actions"><button id="reset" class="ghost small">Reset demo</button><button id="approveLast" class="gold small" hidden>Simulate buyer approval of last checkout</button></div></div>
   </section>
   <section class="card wide"><h3>Audit ledger</h3>
-    <table><thead><tr><th>Time</th><th>Tool</th><th>Amount</th><th>Verdict</th><th>Status</th><th>PayPal ref</th><th>Why</th></tr></thead><tbody id="ledger"></tbody></table>
+    <div class="table-wrap"><table><thead><tr><th>Time</th><th>Tool</th><th>Amount</th><th>Verdict</th><th>Status</th><th>PayPal ref</th><th>Why</th></tr></thead><tbody id="ledger"></tbody></table></div>
   </section>
 </main>
 <script src="/app.js"></script>
