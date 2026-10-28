@@ -23,7 +23,18 @@ async function readJson(req: IncomingMessage): Promise<any> {
 }
 const page = (title: string, inner: string) => `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>${esc(title)}</title><link rel=stylesheet href=/style.css><main class="narrow card">${inner}</main>`;
 
+// Tiny fixed-window rate limit for the hosted demo so a public URL can't burn the LLM key.
+export function rateLimiter(limit = Number(process.env.RATE_LIMIT_PER_MIN ?? 30)) {
+  const hits = new Map<string, { n: number; t: number }>();
+  return (key: string, now = Date.now()) => {
+    const h = hits.get(key);
+    if (!h || now - h.t > 60_000) { hits.set(key, { n: 1, t: now }); return true; }
+    h.n++; return h.n <= limit;
+  };
+}
+
 export function makeHandler(app: App) {
+  const allow = rateLimiter();
   let { engine, agent } = app;
   const state = () => ({
     paypalMode: app.gw.mode, planner: agent.planner.name, currency: app.cfg.currency,
@@ -58,6 +69,7 @@ export function makeHandler(app: App) {
         if (app.cfg.demoPasscode && req.headers["x-demo-passcode"] !== app.cfg.demoPasscode) return send(res, 401, { error: "passcode required" });
         if (req.method === "GET" && p === "/api/state") return send(res, 200, state());
         if (req.method === "GET" && p === "/api/tools") return send(res, 200, TOOL_SPECS);
+        if (req.method === "POST" && !allow(String(req.headers["x-forwarded-for"] ?? req.socket.remoteAddress ?? "?").split(",")[0])) return send(res, 429, { error: "Too many requests, wait a minute." });
         if (req.method === "POST" && p === "/api/chat") {
           const b = await readJson(req);
           if (typeof b.message !== "string" || !b.message.trim()) return send(res, 400, { error: "message required" });

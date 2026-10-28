@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
-import { makeHandler } from "../src/server.ts";
+import { makeHandler, rateLimiter } from "../src/server.ts";
 import { mockApp } from "./helpers.ts";
 import { handle as mcpHandle } from "../src/mcp.ts";
 
@@ -62,4 +62,9 @@ test("MCP bridge: initialize, tools/list and guarded tools/call through the serv
   const denied = await mcpHandle({ jsonrpc: "2.0", id: 4, method: "tools/call", params: { name: "create_payout", arguments: { items: [{ receiver: "x@example.com", amount: 5000 }] } } }, f);
   assert.equal(denied.result.isError, true);
   assert.equal((await mcpHandle({ jsonrpc: "2.0", id: 5, method: "nope" })).error.code, -32601);
+});
+
+test("rate limiter allows N per minute per key", () => {
+  const ok = rateLimiter(2);
+  assert.deepEqual([ok("a", 0), ok("a", 1), ok("a", 2), ok("b", 2), ok("a", 61_000)], [true, true, false, true, true]);
 });
