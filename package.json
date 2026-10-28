@@ -4,8 +4,16 @@
   "description": "Approvd: a guardrailed AI operations agent for PayPal merchants. Natural-language checkout links, captures, refunds and payouts with spend policies and human approval.",
   "type": "module",
   "license": "MIT",
+  "author": "Akhilesh Patil (https://github.com/akhilexx)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akhilexx/approvd.git"
+  },
+  "homepage": "https://github.com/akhilexx/approvd#readme",
   "private": true,
-  "engines": { "node": ">=23.6" },
+  "engines": {
+    "node": ">=23.6"
+  },
   "scripts": {
     "start": "node src/server.ts",
     "dev": "PAYPAL_MODE=mock LLM_MODE=mock node src/server.ts",

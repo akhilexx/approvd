@@ -67,7 +67,7 @@ Design choices:
 Requires **Node.js 24+** (`node -v`).
 
 ```bash
-git clone <this repo> approvd && cd approvd
+git clone https://github.com/akhilexx/approvd.git && cd approvd
 npm run dev          # mock PayPal + offline planner on http://localhost:8787
 # or, in the terminal only:
 npm run demo         # scripted end-to-end story
@@ -155,6 +155,8 @@ docs/            provenance, screenshots
 - The offline planner only understands the demo phrasings. Use `LLM_MODE=openai` for free-form language.
 - Sandbox only. No live PayPal credentials are used or supported.
 
-## License
+## Author and license
 
-[MIT](LICENSE)
+Built by **Akhilesh Patil** ([@akhilexx](https://github.com/akhilexx)), individual entrant. Development was assisted by an AI coding assistant; see [docs/PROVENANCE.md](docs/PROVENANCE.md).
+
+[MIT](LICENSE) © 2026 Akhilesh Patil
