@@ -5,7 +5,7 @@
 import { createInterface } from "node:readline";
 import { TOOL_SPECS } from "./tools.ts";
 
-const BASE = (process.env.APPROVD_URL || "http://localhost:8787").replace(/\/$/, "");
+const base = () => (process.env.APPROVD_URL || "http://localhost:8787").replace(/\/$/, "");
 const write = (msg: unknown) => process.stdout.write(JSON.stringify(msg) + "\n");
 
 export async function handle(req: any, fetchImpl: typeof fetch = fetch): Promise<any> {
@@ -15,7 +15,7 @@ export async function handle(req: any, fetchImpl: typeof fetch = fetch): Promise
   if (method === "tools/call") {
     const headers: Record<string, string> = { "Content-Type": "application/json" };
     if (process.env.DEMO_PASSCODE) headers["x-demo-passcode"] = process.env.DEMO_PASSCODE;
-    const r = await fetchImpl(`${BASE}/api/tools/call`, { method: "POST", headers, body: JSON.stringify({ name: params?.name, args: params?.arguments ?? {}, source: "mcp" }) });
+    const r = await fetchImpl(`${base()}/api/tools/call`, { method: "POST", headers, body: JSON.stringify({ name: params?.name, args: params?.arguments ?? {}, source: "mcp" }) });
     const out: any = await r.json();
     const text = out.status === "pending_approval" ? `Queued for human approval (${out.approvalId}): ${out.decision?.reasons?.join("; ")}. Ask the user to approve it in the Approvd console.` : JSON.stringify(out.result ?? out.error ?? out);
     return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text }], isError: out.status === "denied" || out.status === "failed" } };
