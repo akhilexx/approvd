@@ -1,0 +1,39 @@
+# Render Blueprint (https://render.com/docs/blueprint-spec). One free web service.
+# Secrets are marked sync:false so they are entered in the Render dashboard, never committed.
+services:
+  - type: web
+    name: approvd
+    runtime: node
+    plan: free
+    buildCommand: "true"
+    startCommand: node src/server.ts
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: PAYPAL_MODE
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: LLM_MODE
+        value: openai
+      - key: LLM_BASE_URL
+        sync: false
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        sync: false
+      - key: DEMO_PASSCODE
+        sync: false
+      - key: POLICY_APPROVAL_THRESHOLD
+        value: "50"
+      - key: POLICY_MAX_PER_ACTION
+        value: "500"
+      - key: POLICY_DAILY_OUTFLOW_CAP
+        value: "1000"
+      - key: POLICY_PAYEE_ALLOWLIST
+        value: "@example.com"

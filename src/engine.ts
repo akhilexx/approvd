@@ -112,6 +112,7 @@ export class Engine {
     try {
       const result = await this.dispatch(call);
       const paypalRef = result?.id ?? result?.captureId ?? result?.refundId ?? result?.batchId;
+      if (call.name === "capture_order" && result?.amount) decision = { ...decision, amount: moneyNum(result.amount) };
       if (existing) Object.assign(existing, { status, result, paypalRef, source, reasons: decision.reasons, amount: decision.amount });
       else this.log({ tool: call.name, args: call.args, ...this.d(decision), status, source, result, paypalRef });
       return { call, status, decision, result };

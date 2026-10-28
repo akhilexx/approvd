@@ -21,3 +21,4 @@ button.ok{background:var(--ok);border-color:var(--ok);color:#04130a}button.bad{b
 table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mut);font-weight:500}
 td.v-allow{color:var(--ok)}td.v-needs_approval{color:var(--warn)}td.v-deny,td.v-invalid{color:var(--bad)}code{font-size:12px}
 @media (max-width:860px){.grid{grid-template-columns:1fr}#log{height:340px}}
+a{color:var(--acc)}
