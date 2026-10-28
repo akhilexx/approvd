@@ -21,6 +21,7 @@
     "cli": "node src/cli.ts",
     "mcp": "node src/mcp.ts",
     "smoke:sandbox": "node src/cli.ts smoke",
+    "e2e:sandbox": "node scripts/sandbox-e2e.ts",
     "test": "node --test \"test/*.test.ts\""
   }
 }

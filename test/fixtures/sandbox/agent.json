@@ -1,0 +1,256 @@
+{
+  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v2/checkout/orders",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {
+          "intent": "CAPTURE",
+          "purchase_units": [
+            {
+              "reference_id": "priya-example-com",
+              "description": "2 soy candles for",
+              "amount": {
+                "currency_code": "USD",
+                "value": "45.00"
+              }
+            }
+          ],
+          "payment_source": {
+            "paypal": {
+              "experience_context": {
+                "return_url": "http://localhost:8787/return",
+                "cancel_url": "http://localhost:8787/cancel",
+                "user_action": "PAY_NOW",
+                "shipping_preference": "NO_SHIPPING",
+                "brand_name": "Approvd demo store"
+              }
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "id": "8HV15214WM9593842",
+          "intent": "CAPTURE",
+          "status": "PAYER_ACTION_REQUIRED",
+          "payment_source": {
+            "paypal": {}
+          },
+          "purchase_units": [
+            {
+              "reference_id": "priya-example-com",
+              "amount": {
+                "currency_code": "USD",
+                "value": "45.00"
+              },
+              "payee": {
+                "email_address": "[REDACTED]",
+                "merchant_id": "REDACTED_ID",
+                "display_data": {
+                  "brand_name": "Approvd demo store"
+                }
+              },
+              "description": "2 soy candles for"
+            }
+          ],
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8HV15214WM9593842",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://www.sandbox.paypal.com/checkoutnow?token=8HV15214WM9593842",
+              "rel": "payer-action",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v2/checkout/orders/8HV15214WM9593842",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "id": "8HV15214WM9593842",
+          "intent": "CAPTURE",
+          "status": "PAYER_ACTION_REQUIRED",
+          "payment_source": {
+            "paypal": {}
+          },
+          "purchase_units": [
+            {
+              "reference_id": "priya-example-com",
+              "amount": {
+                "currency_code": "USD",
+                "value": "45.00",
+                "breakdown": {}
+              },
+              "payee": {
+                "email_address": "[REDACTED]",
+                "merchant_id": "REDACTED_ID",
+                "display_data": {
+                  "brand_name": "Approvd demo store"
+                }
+              },
+              "description": "2 soy candles for"
+            }
+          ],
+          "create_time": "2026-10-28T16:59:29Z",
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8HV15214WM9593842",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://www.sandbox.paypal.com/checkoutnow?token=8HV15214WM9593842",
+              "rel": "payer-action",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v2/checkout/orders/8HV15214WM9593842/capture",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {}
+      },
+      "response": {
+        "status": 422,
+        "body": {
+          "name": "UNPROCESSABLE_ENTITY",
+          "details": [
+            {
+              "issue": "ORDER_NOT_APPROVED",
+              "description": "Payer has not yet approved the Order for payment. Please redirect the payer to the 'rel':'approve' url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request."
+            }
+          ],
+          "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
+          "debug_id": "ca51b7dc8ddad",
+          "links": [
+            {
+              "href": "https://developer.paypal.com/api/rest/reference/orders/v2/errors/#ORDER_NOT_APPROVED",
+              "rel": "information_link",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v1/payments/payouts",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {
+          "sender_batch_header": {
+            "sender_batch_id": "approvd-1793206770443-3efd9352",
+            "email_subject": "You have a payout",
+            "email_message": "Sent by Approvd (sandbox demo)."
+          },
+          "items": [
+            {
+              "recipient_type": "EMAIL",
+              "receiver": "asha@example.com",
+              "note": "October deliveries",
+              "sender_item_id": "approvd-1793206770443-3efd9352-0",
+              "amount": {
+                "value": "2.00",
+                "currency": "USD"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 403,
+        "body": {
+          "name": "PAYOUT_NOT_AVAILABLE",
+          "message": "You live in a country that is not allowed to send this payout.",
+          "debug_id": "f72137922d4c1",
+          "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
+          "links": []
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v1/payments/payouts",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {
+          "sender_batch_header": {
+            "sender_batch_id": "approvd-1793206771794-ca934e40",
+            "email_subject": "You have a payout",
+            "email_message": "Sent by Approvd (sandbox demo)."
+          },
+          "items": [
+            {
+              "recipient_type": "EMAIL",
+              "receiver": "newvendor@mail.test",
+              "note": "packaging",
+              "sender_item_id": "approvd-1793206771794-ca934e40-0",
+              "amount": {
+                "value": "60.00",
+                "currency": "USD"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 403,
+        "body": {
+          "name": "PAYOUT_NOT_AVAILABLE",
+          "message": "You live in a country that is not allowed to send this payout.",
+          "debug_id": "ca51b7dd3bec0",
+          "information_link": "https://developer.paypal.com/docs/api/payments.payouts-batch/#errors",
+          "links": []
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v1/customer/disputes?page_size=10",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "items": [],
+          "links": [
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes?page_size=10",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes?page_size=10",
+              "rel": "first",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/v2/checkout/orders",
+        "paypalRequestId": "<set>",
+        "prefer": "return=representation",
+        "body": {
+          "intent": "CAPTURE",
+          "purchase_units": [
+            {
+              "reference_id": "card-test",
+              "description": "Approvd sandbox card test",
+              "amount": {
+                "currency_code": "USD",
+                "value": "10.00"
+              }
+            }
+          ],
+          "payment_source": {
+            "card": {
+              "number": "[TEST CARD]",
+              "expiry": "[REDACTED]",
+              "security_code": "[REDACTED]",
+              "name": "Test Buyer"
+            }
+          }
+        }
+      },
+      "response": {
+        "status": 422,
+        "body": {
+          "name": "UNPROCESSABLE_ENTITY",
+          "details": [
+            {
+              "issue": "PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING",
+              "description": "Payee account is not setup to be able to process card payments. Please contact PayPal customer support."
+            }
+          ],
+          "message": "The requested action could not be performed, semantically incorrect, or failed business validation.",
+          "debug_id": "f506623f8e0f0",
+          "links": [
+            {
+              "href": "https://developer.paypal.com/api/rest/reference/orders/v2/errors/#PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING",
+              "rel": "information_link",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

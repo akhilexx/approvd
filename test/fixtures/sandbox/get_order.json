@@ -1,0 +1,55 @@
+{
+  "recordedAt": "2026-10-28T16:59:32.285Z",
+  "note": "Recorded from api-m.sandbox.paypal.com; redacted (tokens, ids, account emails).",
+  "calls": [
+    {
+      "request": {
+        "method": "GET",
+        "path": "/v2/checkout/orders/59315862B85959205",
+        "prefer": "return=representation"
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "id": "59315862B85959205",
+          "intent": "CAPTURE",
+          "status": "PAYER_ACTION_REQUIRED",
+          "payment_source": {
+            "paypal": {}
+          },
+          "purchase_units": [
+            {
+              "reference_id": "default",
+              "amount": {
+                "currency_code": "USD",
+                "value": "45.00",
+                "breakdown": {}
+              },
+              "payee": {
+                "email_address": "[REDACTED]",
+                "merchant_id": "REDACTED_ID",
+                "display_data": {
+                  "brand_name": "Approvd demo store"
+                }
+              },
+              "description": "2 soy candles (Approvd sandbox e2e)"
+            }
+          ],
+          "create_time": "2026-10-28T16:59:25Z",
+          "links": [
+            {
+              "href": "https://api.sandbox.paypal.com/v2/checkout/orders/59315862B85959205",
+              "rel": "self",
+              "method": "GET"
+            },
+            {
+              "href": "https://www.sandbox.paypal.com/checkoutnow?token=59315862B85959205",
+              "rel": "payer-action",
+              "method": "GET"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
